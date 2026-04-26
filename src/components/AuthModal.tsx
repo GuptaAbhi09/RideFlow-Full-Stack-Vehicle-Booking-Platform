@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { X, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react'
+import { X, Mail, Lock, User, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
+import { useEffect } from 'react'
 
 type PropsType = {
   open: boolean
@@ -19,12 +20,23 @@ const AuthModal = ({ open, onClose }: PropsType) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [otp, setOtp] = useState(['', '', '', ''])
+  const [showPassword, setShowPassword] = useState(false)
   
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   })
+
+  useEffect(() => {
+    if (open) {
+      setStep('login')
+      setFormData({ name: '', email: '', password: '' })
+      setOtp(['', '', '', ''])
+      setError(null)
+      setShowPassword(false)
+    }
+  }, [open])
 
   if (!open) return null
 
@@ -215,13 +227,20 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                     <input
                       name="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={formData.password}
                       onChange={handleInputChange}
                       placeholder="Password"
-                      className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                      className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-12 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
 
@@ -311,13 +330,20 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                     <input
                       name="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={formData.password}
                       onChange={handleInputChange}
                       placeholder="Password"
-                      className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                      className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-12 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
 
@@ -337,6 +363,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                 </p>
               </motion.form>
             )}
+
 
             {step === 'otp' && (
               <motion.div

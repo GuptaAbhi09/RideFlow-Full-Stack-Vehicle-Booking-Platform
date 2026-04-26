@@ -18,6 +18,10 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from 'react-hot-toast';
+import { ReduxProvider } from '@/redux/reduxprovider';
+import { SessionProvider } from 'next-auth/react';
+import { ReduxSync } from '@/redux/ReduxSync';
+import { InitUser } from '@/components/InitUser';
 
 export default function RootLayout({
   children,
@@ -30,17 +34,24 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#18181b',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
-            },
-          }}
-        />
+        <SessionProvider>
+          <ReduxProvider>
+            <ReduxSync />
+            <InitUser>
+              {children}
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  style: {
+                    background: '#18181b',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  },
+                }}
+              />
+            </InitUser>
+          </ReduxProvider>
+        </SessionProvider>
       </body>
     </html>
   );
