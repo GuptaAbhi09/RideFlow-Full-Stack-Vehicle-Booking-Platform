@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'motion/react'
 import { Bus, Bike, Car, Truck, ChevronRight } from 'lucide-react'
 
-const HeroSection = () => {
+const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
   const vehicleIcons = [
     { Icon: Bus, label: 'Bus' },
     { Icon: Bike, label: 'Bike' },
@@ -20,7 +20,8 @@ const HeroSection = () => {
           backgroundImage: "url('/hero-bg.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.4) blur(4px)'
+          filter: 'brightness(0.3) blur(4px)',
+          opacity: 0.4
         }} 
       />
       
@@ -62,7 +63,10 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           className="flex items-center justify-center gap-4 mb-16"
         >
-          <button className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-blue-600/20 flex items-center gap-2 overflow-hidden">
+          <button 
+            onClick={onBookNow}
+            className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-blue-600/20 flex items-center gap-2 overflow-hidden cursor-pointer"
+          >
             <span className="relative z-10">Book Now</span>
             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -79,7 +83,7 @@ const HeroSection = () => {
             <motion.div
               key={label}
               whileHover={{ y: -5, backgroundColor: "rgba(59, 130, 246, 0.1)" }}
-              className="p-6 rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center gap-3 backdrop-blur-sm shadow-xl transition-colors"
+              className="p-6 rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center gap-3 backdrop-blur-sm shadow-xl transition-colors cursor-pointer"
             >
               <div className="p-3 rounded-2xl bg-blue-500/20 text-blue-400">
                 <Icon size={24} />

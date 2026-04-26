@@ -2,13 +2,12 @@ import connectDb from "@/lib/db"
 import User from "@/models/user.model"
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
+import { sendMail } from "@/lib/sendMail"
 
 export async function POST(req: Request) {
     try {
-        // Parse Body 
         const { name, email, password } = await req.json()
 
-        // Basic Validation 
         if(!name || !email || !password) {
             return NextResponse.json(
                 {error : "All fields are required"},
@@ -16,35 +15,46 @@ export async function POST(req: Request) {
             )
         }
 
-        // connect DB
         await connectDb()
 
-        // check existing user
         const existingUser = await User.findOne({email});
         if(existingUser) {
             return NextResponse.json(
-                {message: "User already exist"},
+                {message: "User already exists"},
                 {status: 400}
             )
         }
 
-        // hashed password 
-        const hashedPassword = await bcrypt.hash(password,10)
+        const hashedPassword = await bcrypt.hash(password, 10)
+        
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
-        // create user 
         const user = await User.create({
-            name, email, password:hashedPassword
+            name, 
+            email, 
+            password: hashedPassword,
+            otp,
+            otpExpires
         })
 
-        // return response
+        const mailRes = await sendMail(email, otp);
+        
+        if (!mailRes.success) {
+            return NextResponse.json(
+                { message: "User created but failed to send verification email" },
+                { status: 201 }
+            )
+        }
+
         return NextResponse.json(
-            user,
-            {status: 201}
+            { message: "Registration successful. Please verify your email.", email },
+            { status: 201 }
         )
 
     } catch (error) {
         return NextResponse.json(
-            {error: "Internal Server Eroor"},
+            {error: "Internal Server Error"},
             {status: 500}
         )
     }

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X } from 'lucide-react'
 
-const Navbar = () => {
+const Navbar = ({ onLogin }: { onLogin: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -32,7 +32,7 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center group">
+        <Link href="/" className="flex items-center group cursor-pointer">
           <Image 
             src="/logo.png"
             alt="RideFlow Logo" 
@@ -48,19 +48,22 @@ const Navbar = () => {
             <Link 
               key={link.name} 
               href={link.href}
-              className="text-gray-300 hover:text-white font-medium transition-colors relative group"
+              className="text-gray-300 hover:text-white font-medium transition-colors relative group cursor-pointer"
             >
               {link.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
-          <button className="px-6 py-2.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300">
+          <button 
+            onClick={onLogin}
+            className="px-6 py-2.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 cursor-pointer"
+          >
             Sign In
           </button>
         </div>
 
         <button 
-          className="md:hidden text-white p-2"
+          className="md:hidden text-white p-2 cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -80,12 +83,18 @@ const Navbar = () => {
                 key={link.name} 
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="text-gray-300 hover:text-white text-lg font-medium"
+                className="text-gray-300 hover:text-white text-lg font-medium cursor-pointer"
               >
                 {link.name}
               </Link>
             ))}
-            <button className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl mt-2">
+            <button 
+              onClick={() => {
+                onLogin();
+                setIsOpen(false);
+              }}
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl mt-2 cursor-pointer"
+            >
               Sign In
             </button>
           </motion.div>

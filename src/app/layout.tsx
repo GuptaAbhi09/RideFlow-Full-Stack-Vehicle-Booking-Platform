@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "RideFlow is a production-grade vehicle booking platform with real-time live map tracking, Video KYC driver verification, and seamless Razorpay payments. Book rides instantly, track live.",
 };
 
+import { Toaster } from 'react-hot-toast';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +29,19 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#18181b',
+              color: '#fff',
+              border: '1px solid rgba(255,255,255,0.1)',
+            },
+          }}
+        />
+      </body>
     </html>
   );
 }
