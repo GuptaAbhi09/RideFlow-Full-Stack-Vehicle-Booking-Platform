@@ -13,7 +13,7 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
   ]
 
   return (
-    <section className="relative h-[90vh] min-h-[600px] w-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] pt-20">
+    <section className="relative min-h-[90vh] py-24 w-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] pt-32 pb-20">
       <div 
         className="absolute inset-0 z-0 scale-110"
         style={{ 
