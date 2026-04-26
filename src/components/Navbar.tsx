@@ -6,14 +6,17 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { Menu, X, User as UserIcon, LogOut, Briefcase } from 'lucide-react'
 
 const Navbar = ({ onLogin }: { onLogin: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const user = useSelector((state: RootState) => state.user.user)
+  const { user: reduxUser, loading: authLoading } = useSelector((state: RootState) => state.user)
+  const { data: session, status } = useSession()
+  const currentUser = reduxUser || session?.user
+  const isAuthLoading = status === 'loading' || (authLoading && !currentUser)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,7 +28,6 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    ...(user ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
     { name: 'Booking', href: '/booking' },
     { name: 'About Us', href: '/about' },
     { name: 'Contact', href: '/contact' },
@@ -33,13 +35,13 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4 ${
-        scrolled ? 'bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4 border-b ${
+        scrolled ? 'bg-[#0a0a0a]/80 backdrop-blur-lg border-white/10' : 'bg-transparent border-transparent'
       }`}
     >
       <div className="max-w-6xl mx-auto flex items-center">
-        {/* Left: Logo */}
-        <div className="flex-1">
+        {/* Left: Logo - Fixed width to balance the layout */}
+        <div className="w-[200px] flex-shrink-0">
           <Link href="/" className="flex items-center group cursor-pointer w-fit">
             <Image 
               src="/logo.png"
@@ -52,7 +54,7 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
           </Link>
         </div>
 
-        {/* Middle: Links */}
+        {/* Middle: Links - Centered space */}
         <div className="hidden md:flex flex-1 justify-center items-center gap-10">
           {navLinks.map((link) => (
             <Link 
@@ -66,15 +68,17 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
           ))}
         </div>
 
-        {/* Right: Auth/Profile */}
-        <div className="hidden md:flex flex-1 justify-end items-center gap-4">
-          {user ? (
+        {/* Right: Auth/Profile - Fixed width to prevent shifting links */}
+        <div className="hidden md:flex w-[200px] flex-shrink-0 justify-end items-center gap-4">
+          {isAuthLoading ? (
+            <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
+          ) : currentUser ? (
             <div className="relative">
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:bg-blue-700 transition-all border-2 border-white/10 shadow-lg"
               >
-                {user.name?.[0].toUpperCase()}
+                {currentUser.name?.[0].toUpperCase()}
               </button>
 
               <AnimatePresence>
@@ -91,8 +95,8 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
                       className="absolute right-0 mt-4 w-64 rounded-2xl bg-[#121212] border border-white/10 p-4 shadow-2xl z-50"
                     >
                       <div className="pb-4 border-b border-white/5 mb-4 px-2">
-                        <p className="text-white font-bold text-lg truncate">{user.name}</p>
-                        <p className="text-gray-400 text-xs truncate">{user.email}</p>
+                        <p className="text-white font-bold text-lg truncate">{currentUser.name}</p>
+                        <p className="text-gray-400 text-xs truncate">{currentUser.email}</p>
                       </div>
 
                       <div className="space-y-1">
@@ -156,15 +160,19 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
               </Link>
             ))}
             
-            {user ? (
+            {isAuthLoading ? (
+              <div className="mt-4 pt-6 border-t border-white/10 flex justify-center">
+                <div className="h-12 w-12 rounded-full bg-white/5 animate-pulse" />
+              </div>
+            ) : currentUser ? (
               <div className="mt-4 pt-6 border-t border-white/10 space-y-6">
                 <div className="flex items-center gap-4 px-2">
                   <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
-                    {user.name?.[0].toUpperCase()}
+                    {currentUser.name?.[0].toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-white font-bold text-lg">{user.name}</p>
-                    <p className="text-gray-400 text-sm">{user.email}</p>
+                    <p className="text-white font-bold text-lg">{currentUser.name}</p>
+                    <p className="text-gray-400 text-sm">{currentUser.email}</p>
                   </div>
                 </div>
                 

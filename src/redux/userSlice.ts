@@ -12,7 +12,7 @@ interface UserState {
 
 const initialState: UserState = {
   user: null,
-  loading: false,
+  loading: true,
 };
 
 export const userSlice = createSlice({
@@ -21,9 +21,11 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<UserState['user']>) => {
       state.user = action.payload;
+      state.loading = false;
     },
     clearUser: (state) => {
       state.user = null;
+      state.loading = false;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
