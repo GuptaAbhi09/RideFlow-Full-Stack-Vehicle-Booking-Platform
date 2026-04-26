@@ -77,18 +77,20 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
+          className="flex flex-wrap justify-center gap-x-12 gap-y-6 max-w-4xl mx-auto"
         >
           {vehicleIcons.map(({ Icon, label }) => (
             <motion.div
               key={label}
-              whileHover={{ y: -5, backgroundColor: "rgba(59, 130, 246, 0.1)" }}
-              className="p-6 rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center gap-3 backdrop-blur-sm shadow-xl transition-colors cursor-pointer"
+              whileHover={{ y: -5 }}
+              className="flex flex-col items-center gap-2 group cursor-pointer"
             >
-              <div className="p-3 rounded-2xl bg-blue-500/20 text-blue-400">
-                <Icon size={24} />
+              <div className="text-gray-400 group-hover:text-blue-500 transition-colors duration-300">
+                <Icon size={32} />
               </div>
-              <span className="text-white font-semibold">{label}</span>
+              <span className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-300">
+                {label}
+              </span>
             </motion.div>
           ))}
         </motion.div>
