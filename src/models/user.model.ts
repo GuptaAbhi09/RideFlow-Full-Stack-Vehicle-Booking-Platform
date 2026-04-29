@@ -10,6 +10,9 @@ interface IUser extends Document {
     otpExpires: Date;
     createdAt: Date;
     updatedAt: Date;
+    partnerOnboardingStep: number;
+    partnerStatus: "none" | "pending" | "approved" | "rejected";
+    phoneNumber?: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -21,6 +24,11 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true,
         unique: true
+    },
+    phoneNumber: {
+        type: String,
+        unique: true,
+        sparse: true
     },
     password: {
         type: String
@@ -39,6 +47,17 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     otpExpires: {
         type: Date
+    },
+    partnerOnboardingStep: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 8
+    },
+    partnerStatus: {
+        type: String,
+        default: "none",
+        enum: ["none", "pending", "approved", "rejected"]
     }
 }, { timestamps: true })
 

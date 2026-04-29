@@ -6,9 +6,9 @@ import { sendMail } from "@/lib/sendMail"
 
 export async function POST(req: Request) {
     try {
-        const { name, email, password } = await req.json()
+        const { name, email, password, phoneNumber } = await req.json()
 
-        if(!name || !email || !password) {
+        if(!name || !email || !password || !phoneNumber) {
             return NextResponse.json(
                 {error : "All fields are required"},
                 {status: 400}
@@ -20,7 +20,15 @@ export async function POST(req: Request) {
         const existingUser = await User.findOne({email});
         if(existingUser) {
             return NextResponse.json(
-                {message: "User already exists"},
+                {message: "Email already exists"},
+                {status: 400}
+            )
+        }
+
+        const existingPhone = await User.findOne({phoneNumber});
+        if(existingPhone) {
+            return NextResponse.json(
+                {message: "Phone number already exists"},
                 {status: 400}
             )
         }
@@ -34,6 +42,7 @@ export async function POST(req: Request) {
             name, 
             email, 
             password: hashedPassword,
+            phoneNumber,
             otp,
             otpExpires
         })

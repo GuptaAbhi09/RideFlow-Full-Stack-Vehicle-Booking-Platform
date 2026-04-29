@@ -34,6 +34,10 @@ export const PROTECTED_ROUTES: { path: string; allowedRoles: UserRole[] }[] = [
         allowedRoles: ['user', 'admin']
     },
     {
+        path: '/partner/onboarding',
+        allowedRoles: ['user', 'partner', 'admin']
+    },
+    {
         path: '/partner',
         allowedRoles: ['partner', 'admin']
     },
@@ -44,6 +48,10 @@ export const PROTECTED_ROUTES: { path: string; allowedRoles: UserRole[] }[] = [
     // API Route Protections
     {
         path: '/api/user',
+        allowedRoles: ['user', 'partner', 'admin']
+    },
+    {
+        path: '/api/partner/onboarding',
         allowedRoles: ['user', 'partner', 'admin']
     },
     {

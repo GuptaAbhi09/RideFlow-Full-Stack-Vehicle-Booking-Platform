@@ -13,10 +13,10 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { user: reduxUser, loading: authLoading } = useSelector((state: RootState) => state.user)
+  const { user: reduxUser } = useSelector((state: RootState) => state.user)
   const { data: session, status } = useSession()
   const currentUser = reduxUser || session?.user
-  const isAuthLoading = status === 'loading' || (authLoading && !currentUser)
+  const isAuthLoading = status === 'loading'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,7 +101,7 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
 
                       <div className="space-y-1">
                         <Link 
-                          href="/partner" 
+                          href="/partner/onboarding/vehicle" 
                           onClick={() => setIsProfileOpen(false)}
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
                         >
@@ -178,7 +178,7 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
                 
                 <div className="flex flex-col gap-3">
                   <Link 
-                    href="/partner"
+                    href="/partner/onboarding/vehicle"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 text-blue-400 w-full"
                   >

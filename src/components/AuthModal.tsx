@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { X, Mail, Lock, User, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react'
+import { X, Mail, Lock, User, Phone, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useEffect } from 'react'
 
@@ -26,12 +26,13 @@ const AuthModal = ({ open, onClose }: PropsType) => {
     name: '',
     email: '',
     password: '',
+    phoneNumber: '',
   })
 
   useEffect(() => {
     if (open) {
       setStep('login')
-      setFormData({ name: '', email: '', password: '' })
+      setFormData({ name: '', email: '', password: '', phoneNumber: '' })
       setOtp(['', '', '', ''])
       setError(null)
       setShowPassword(false)
@@ -311,6 +312,18 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="Full Name"
+                      className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                    <input
+                      name="phoneNumber"
+                      type="tel"
+                      required
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      placeholder="Mobile Number"
                       className="w-full rounded-2xl bg-white/5 border border-white/10 py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
                     />
                   </div>
