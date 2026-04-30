@@ -76,6 +76,13 @@ export const checkAccess = (pathname: string, role?: string) => {
     const isPublic = PUBLIC_ROUTES.some(route => 
         pathname === route || pathname.startsWith(`${route}/`)
     );
+
+    // AUTO-REDIRECT: If logged in as admin or partner and landing on root, redirect to their dashboard
+    if (pathname === '/') {
+        if (role === 'admin') return { allowed: false, redirectTo: '/admin/dashboard' };
+        if (role === 'partner') return { allowed: false, redirectTo: '/partner/dashboard' };
+    }
+
     if (isPublic) return { allowed: true };
 
     // 2. Check if it's an Auth route (login/signup)

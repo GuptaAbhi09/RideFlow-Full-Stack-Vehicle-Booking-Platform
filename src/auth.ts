@@ -1,103 +1,103 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import connectDb from "./lib/db";
 import User from "./models/user.model";
 import bcrypt from "bcryptjs";
-import Google from "next-auth/providers/google";
+import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
     Credentials({
       credentials: {
-        email: {
-          type: "email",
-          label: "Email",
-          placeholder: "example@gmail.com",
-        },
-        password: {
-          type: "password",
-          label: "Password",
-          placeholder: "*****",
-        },
+        email: { type: "email", label: "Email" },
+        password: { type: "password", label: "Password" },
       },
-      async authorize(credentials, request) {
-          if(!credentials.email || !credentials.password) {
-            throw Error("missing credentials!")
-          }
-          const email=credentials.email
-          const password = credentials.password as string
-          await connectDb()
-          const user = await User.findOne({email})
-          if(!user) {
-            throw Error("User not exist")
-          }
-          const isMatch = await bcrypt.compare(password, user.password)
-          if(!isMatch) {
-            throw Error("Invalid password")
-          }
-          return {
-            id:user._id,
-            email:user.email,
-            role:user.role,
-            name:user.name
-          }
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials!");
+        }
+        
+        await connectDb();
+        const user = await User.findOne({ email: credentials.email });
+        
+        if (!user) {
+          throw new Error("User does not exist");
+        }
+        
+        const isMatch = await bcrypt.compare(credentials.password as string, user.password);
+        
+        if (!isMatch) {
+          throw new Error("Invalid password");
+        }
+        
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          role: user.role,
+          name: user.name,
+        };
       },
     }),
-    Google({
-        clientId:process.env.AUTH_GOOGLE_ID,
-        clientSecret:process.env.AUTH_GOOGLE_SECRET
-    })
   ],
   callbacks: {
-    // Jab google se login kre and pahle se user create na ho
-    async signIn({user, account}) {
-        if(account?.provider=="google") {
-            await connectDb()
-            let dbUser = await User.findOne({email:user.email})
-            if(!dbUser) {
-                dbUser = await User.create({
-                    name:user.name,
-                    email:user.email
-                })
-            }
-            user.id=dbUser._id.toString()
-            user.role=dbUser.role
+    ...authConfig.callbacks,
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          await connectDb();
+          let dbUser = await User.findOne({ email: user.email });
+          if (!dbUser) {
+            dbUser = await User.create({
+              name: user.name,
+              email: user.email,
+              role: "user", // default role
+            });
+          }
+          user.id = dbUser._id.toString();
+          user.role = dbUser.role;
+        } catch (error) {
+          console.error("Google sign-in error:", error);
+          return false;
         }
-        return true
+      }
+      return true;
     },
-    async jwt({token, user}) {
-        if (user) {
-            token.id = user.id
-            token.name = user.name
-            token.email = user.email
-            token.role = user.role
-        } else if (token.email) {
-            // Sync role with database to handle role upgrades (e.g. user -> partner)
-            try {
-                await connectDb()
-                const dbUser = await User.findOne({ email: token.email }).select("role")
-                if (dbUser) {
-                    token.role = dbUser.role
-                }
-            } catch (error) {
-                console.error("JWT sync error:", error)
-            }
+    async jwt({ token, user, trigger, session }) {
+      // If we have a user (sign in), add their info to the token
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.name = user.name;
+        token.email = user.email;
+      }
+      
+      // Handle session updates (e.g. role change)
+      if (trigger === "update" && session?.role) {
+        token.role = session.role;
+      }
+
+      // We ONLY hit the DB if we are NOT in the edge runtime (middleware)
+      // Next.js sets an environment variable for the runtime
+      if (process.env.NEXT_RUNTIME !== 'edge' && !user && token.email) {
+        try {
+          await connectDb();
+          const dbUser = await User.findOne({ email: token.email }).select("role name");
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.name = dbUser.name;
+          }
+        } catch (error) {
+          console.error("JWT background sync error:", error);
         }
-        return token
+      }
+      
+      return token;
     },
-    async session ({session, token}) {
-        if(session.user) {
-            session.user.name=token.name as string,
-            session.user.id=token.id as string,
-            session.user.email=token.email as string,
-            session.user.role=token.role as string
-        }
-        return session
-    }
   },
-  session: {
-    strategy: "jwt",
-    maxAge:10*24*60*60
-  },
-  secret:process.env.BETTER_AUTH_SECRET
 });

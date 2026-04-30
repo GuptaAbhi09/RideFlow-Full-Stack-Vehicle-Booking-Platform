@@ -92,14 +92,7 @@ const PartnerNavbar = () => {
                     <span className="text-sm font-medium">Edit Profile</span>
                   </Link>
 
-                  <Link 
-                    href="/partner/settings"
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer group"
-                  >
-                    <Settings size={18} className="text-gray-500 group-hover:text-blue-500" />
-                    <span className="text-sm font-medium">Settings</span>
-                  </Link>
+
 
                   <div className="h-px bg-white/5 my-2 mx-2" />
 
