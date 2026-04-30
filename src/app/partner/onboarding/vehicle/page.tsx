@@ -80,7 +80,7 @@ export default function VehicleOnboardingStep1() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pt-32 pb-12 px-6 flex justify-center">
+    <div className="pt-8 pb-12 px-6 flex justify-center">
       <div className="w-full max-w-2xl">
         {/* Step Indicator */}
         <div className="flex items-center gap-4 mb-10">

@@ -101,12 +101,14 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
 
                       <div className="space-y-1">
                         <Link 
-                          href="/partner/onboarding/vehicle" 
+                          href={currentUser.role === 'partner' ? '/partner/dashboard' : '/partner/onboarding/vehicle'} 
                           onClick={() => setIsProfileOpen(false)}
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
                         >
                           <Briefcase size={18} className="text-blue-500" />
-                          <span className="font-medium">Become a Partner</span>
+                          <span className="font-medium">
+                            {currentUser.role === 'partner' ? 'Partner Dashboard' : 'Become a Partner'}
+                          </span>
                         </Link>
                         
                         <button 
@@ -178,12 +180,14 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
                 
                 <div className="flex flex-col gap-3">
                   <Link 
-                    href="/partner/onboarding/vehicle"
+                    href={currentUser.role === 'partner' ? '/partner/dashboard' : '/partner/onboarding/vehicle'}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 text-blue-400 w-full"
                   >
                     <Briefcase size={20} />
-                    <span className="text-sm font-bold">Become a Partner</span>
+                    <span className="text-sm font-bold">
+                      {currentUser.role === 'partner' ? 'Partner Dashboard' : 'Become a Partner'}
+                    </span>
                   </Link>
                   <button 
                     onClick={() => signOut()}

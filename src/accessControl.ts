@@ -26,8 +26,8 @@ export type UserRole = 'user' | 'partner' | 'admin';
 // Path-based access rules using startsWith logic
 export const PROTECTED_ROUTES: { path: string; allowedRoles: UserRole[] }[] = [
     {
-        path: '/dashboard',
-        allowedRoles: ['user', 'partner', 'admin']
+        path: '/partner/dashboard',
+        allowedRoles: ['partner', 'admin']
     },
     {
         path: '/booking',
@@ -81,9 +81,11 @@ export const checkAccess = (pathname: string, role?: string) => {
     // 2. Check if it's an Auth route (login/signup)
     const isAuthRoute = AUTH_ROUTES.some(route => pathname === route);
     
-    // If logged in and trying to access login/signup, redirect to dashboard
+    // If logged in and trying to access login/signup, redirect to their respective dashboard
     if (isAuthRoute) {
-        if (role) return { allowed: false, redirectTo: '/dashboard' };
+        if (role === 'admin') return { allowed: false, redirectTo: '/admin' };
+        if (role === 'partner') return { allowed: false, redirectTo: '/partner/dashboard' };
+        if (role === 'user') return { allowed: false, redirectTo: '/' }; // Standard users stay on home or their booking page
         return { allowed: true };
     }
 
@@ -109,8 +111,11 @@ export const checkAccess = (pathname: string, role?: string) => {
     }
 
     // If role is not allowed, redirect to a safe default page
+    const redirectTo = role === 'admin' ? '/admin' : 
+                       role === 'partner' ? '/partner/dashboard' : '/';
+    
     return { 
         allowed: false, 
-        redirectTo: role === 'admin' ? '/admin' : role === 'partner' ? '/partner' : '/dashboard' 
+        redirectTo
     };
 };

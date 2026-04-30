@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { X, Mail, Lock, User, Phone, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 type PropsType = {
   open: boolean
@@ -16,6 +17,7 @@ type AuthStep = 'login' | 'signup' | 'otp'
 import { toast } from 'react-hot-toast'
 
 const AuthModal = ({ open, onClose }: PropsType) => {
+  const router = useRouter()
   const [step, setStep] = useState<AuthStep>('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -83,6 +85,22 @@ const AuthModal = ({ open, onClose }: PropsType) => {
         toast.error(res.error)
       } else {
         toast.success('Welcome back!')
+        
+        // Redirect based on role
+        try {
+          const userRes = await fetch('/api/user/me')
+          if (userRes.ok) {
+            const userData = await userRes.json()
+            if (userData.role === 'admin') {
+              router.push('/admin')
+            } else {
+              router.push('/partner/dashboard')
+            }
+          }
+        } catch (e) {
+          console.error("Redirect error", e)
+        }
+        
         onClose()
       }
     } catch (err) {

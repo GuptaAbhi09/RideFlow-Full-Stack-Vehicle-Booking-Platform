@@ -71,6 +71,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.name = user.name
             token.email = user.email
             token.role = user.role
+        } else if (token.email) {
+            // Sync role with database to handle role upgrades (e.g. user -> partner)
+            try {
+                await connectDb()
+                const dbUser = await User.findOne({ email: token.email }).select("role")
+                if (dbUser) {
+                    token.role = dbUser.role
+                }
+            } catch (error) {
+                console.error("JWT sync error:", error)
+            }
         }
         return token
     },
