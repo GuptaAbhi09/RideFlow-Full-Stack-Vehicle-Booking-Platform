@@ -68,9 +68,10 @@ export async function PATCH(
 
     user.partnerStatus = status
     
-    // If approved, we move them to Step 4 (Video KYC)
+    // If approved, we move them to Step 4 (Video KYC) and set KYC status to pending
     if (status === "approved") {
       user.partnerOnboardingStep = 4
+      user.videoKycStatus = "pending"
     }
     
     await user.save()

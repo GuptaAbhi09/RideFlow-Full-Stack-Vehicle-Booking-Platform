@@ -27,12 +27,11 @@ export async function GET() {
       partnerOnboardingStep: { $gte: 3 } 
     }).select("name email partnerOnboardingStep createdAt").limit(10)
 
-    // 3. Pending Video KYC (Step 4 - waiting for call)
+    // 3. Pending Video KYC (Partners in pending or in_progress kyc state)
     const pendingKyc = await User.find({ 
       role: "partner", 
-      partnerStatus: "approved",
-      partnerOnboardingStep: 4
-    }).select("name email partnerOnboardingStep createdAt").limit(10)
+      videoKycStatus: { $in: ["pending", "in_progress"] }
+    }).select("name email partnerOnboardingStep videoKycStatus createdAt").limit(10)
 
     // 4. Pending Vehicle Reviews
     const pendingVehicles = await Vehicle.find({ status: "pending" })

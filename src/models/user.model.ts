@@ -13,6 +13,9 @@ interface IUser extends Document {
     partnerOnboardingStep: number;
     partnerStatus: "none" | "pending" | "approved" | "rejected";
     phoneNumber?: string;
+    videoKycStatus: "not_required" | "pending" | "in_progress" | "approved" | "rejected";
+    videoKycRoomId?: string;
+    videoKycRejectionReason?: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -58,6 +61,17 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         default: "none",
         enum: ["none", "pending", "approved", "rejected"]
+    },
+    videoKycStatus: {
+        type: String,
+        default: "not_required",
+        enum: ["not_required", "pending", "in_progress", "approved", "rejected"]
+    },
+    videoKycRoomId: {
+        type: String
+    },
+    videoKycRejectionReason: {
+        type: String
     }
 }, { timestamps: true })
 

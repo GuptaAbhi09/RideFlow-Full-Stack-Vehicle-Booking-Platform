@@ -32,6 +32,7 @@ interface PendingUser {
   name: string
   email: string
   partnerOnboardingStep: number
+  videoKycStatus?: string
   createdAt: string
 }
 
@@ -207,11 +208,11 @@ const AdminDashboard = () => {
                   id={partner._id}
                   title={partner.name}
                   subtitle={partner.email}
-                  tag="KYC Pending"
+                  tag={partner.videoKycStatus === 'in_progress' ? "Live Call" : "KYC Pending"}
                   icon={Video}
                   color="green"
-                  actionText="Start Call"
-                  isUrgent
+                  actionText={partner.videoKycStatus === 'in_progress' ? "Join Call" : "Start Call"}
+                  isUrgent={partner.videoKycStatus === 'in_progress'}
                 />
               )) : <EmptyState message="No pending KYC sessions" />}
             </motion.div>
@@ -290,7 +291,11 @@ const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, i
       </div>
 
       <Link 
-        href={color === 'blue' ? `/admin/partners/${id}` : '#'}
+        href={
+          color === 'blue' ? `/admin/partners/${id}` : 
+          color === 'green' ? `/admin/kyc/${id}` : 
+          '#'
+        }
         className={`px-5 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 ${
           color === 'blue' ? 'bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white' :
           color === 'green' ? 'bg-green-600/10 text-green-500 hover:bg-green-600 hover:text-white' :
