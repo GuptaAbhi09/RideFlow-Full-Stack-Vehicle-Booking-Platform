@@ -36,15 +36,25 @@ export default function PartnerDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [userData, setUserData] = useState<any>(null)
+  const [vehicleData, setVehicleData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/user/me')
-        if (res.ok) {
-          const data = await res.json()
-          setUserData(data)
+        const [userRes, vehicleRes] = await Promise.all([
+          fetch('/api/user/me'),
+          fetch('/api/partner/onboarding/vehicle')
+        ])
+        
+        if (userRes.ok) {
+          const userData = await userRes.json()
+          setUserData(userData)
+        }
+        
+        if (vehicleRes.ok) {
+          const vehicleData = await vehicleRes.json()
+          setVehicleData(vehicleData.vehicle)
         }
       } catch (error) {
         console.error("Dashboard error:", error)
@@ -55,7 +65,7 @@ export default function PartnerDashboard() {
     }
 
     if (status === 'authenticated') {
-      fetchUserData()
+      fetchData()
     } else if (status === 'unauthenticated') {
       router.push('/')
     }
@@ -71,9 +81,15 @@ export default function PartnerDashboard() {
 
   const currentStep = userData?.partnerOnboardingStep || 0
   const partnerStatus = userData?.partnerStatus || 'none'
+  const vehicleStatus = vehicleData?.status || 'none'
 
   // Helper to determine step status
   const getStepStatus = (stepId: number) => {
+    // If vehicle is rejected, allow access to step 1 and step 6 to fix
+    if (vehicleStatus === 'rejected' && (stepId === 1 || stepId === 6)) {
+        return 'in-progress'
+    }
+
     if (stepId <= currentStep) {
         // Special case for Review step (Step 4)
         if (stepId === 4 && partnerStatus !== 'approved') return 'in-progress'
@@ -97,11 +113,36 @@ export default function PartnerDashboard() {
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">Partner Dashboard</h1>
           </div>
-
         </div>
 
+        {/* Vehicle Rejection Banner */}
+        {vehicleStatus === 'rejected' && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-4"
+          >
+            <div className="bg-red-500/20 p-2 rounded-xl shrink-0 mt-1">
+              <AlertCircle className="text-red-500" size={24} />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-red-500 text-lg mb-1">Final Vehicle Verification Failed</h4>
+              <p className="text-sm text-red-400/80 mb-3 leading-relaxed">
+                Your vehicle application was reviewed but could not be approved. Reason: <strong className="text-red-400">"{vehicleData.rejectionReason}"</strong>
+              </p>
+              <button 
+                onClick={() => router.push('/partner/onboarding/pricing')}
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 w-fit"
+              >
+                Fix Fare Pricing & Vehicle Photo
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Status Banner */}
-        {partnerStatus === 'pending' && currentStep === 3 && (
+        {partnerStatus === 'pending' && currentStep === 3 && vehicleStatus !== 'rejected' && (
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}

@@ -27,10 +27,12 @@ export async function POST(req: Request) {
         vehicleType: vehicleType === 'auto' ? 'Auto' : vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1).toLowerCase(),
         vehicleModel: vehicleModel,
         plateNumber: vehicleNumber,
-        imageUrl: "https://placeholder.com/default-vehicle.png",
-        baseFare: 50,
-        pricePerKm: 12,
-        waitingCharge: 2,
+        $setOnInsert: {
+          imageUrl: "https://placeholder.com/default-vehicle.png",
+          baseFare: 50,
+          pricePerKm: 12,
+          waitingCharge: 2,
+        },
         status: "pending",
         isActive: true
       },

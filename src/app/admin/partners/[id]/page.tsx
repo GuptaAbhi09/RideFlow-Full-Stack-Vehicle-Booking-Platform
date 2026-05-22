@@ -168,13 +168,43 @@ const PartnerReviewPage = () => {
             )}
           </Section>
 
-          {/* Section 2.5: Vehicle Details */}
-          <Section icon={Car} title="Registered Vehicle Details" color="blue">
+          {/* Section 2.5: Vehicle Details & Pricing */}
+          <Section icon={Car} title="Registered Vehicle Details & Pricing" color="blue">
             {data.vehicle ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <InfoItem icon={Car} label="Vehicle Type" value={data.vehicle.vehicleType} />
-                <InfoItem icon={FileText} label="Model Name" value={data.vehicle.vehicleModel} />
-                <InfoItem icon={Hash} label="Plate Number" value={data.vehicle.plateNumber} />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <InfoItem icon={Car} label="Vehicle Type" value={data.vehicle.vehicleType} />
+                  <InfoItem icon={FileText} label="Model Name" value={data.vehicle.vehicleModel} />
+                  <InfoItem icon={Hash} label="Plate Number" value={data.vehicle.plateNumber} />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-4">
+                  <InfoItem icon={Banknote} label="Base Fare" value={`₹${data.vehicle.baseFare}`} />
+                  <InfoItem icon={TrendingUp} label="Price Per Km" value={`₹${data.vehicle.pricePerKm}`} />
+                  <InfoItem icon={Clock} label="Waiting Charge / Min" value={`₹${data.vehicle.waitingCharge}`} />
+                </div>
+
+                {data.vehicle.imageUrl && data.vehicle.imageUrl !== "https://placeholder.com/default-vehicle.png" && (
+                  <div className="border-t border-white/5 pt-4">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-3">Vehicle Photo</p>
+                    <div className="w-48 aspect-[3/2] relative rounded-xl overflow-hidden border border-white/10 group">
+                      <Image 
+                        src={data.vehicle.imageUrl} 
+                        alt="Vehicle" 
+                        fill 
+                        className="object-cover opacity-80 group-hover:opacity-100 transition-all group-hover:scale-105"
+                      />
+                      <a 
+                        href={data.vehicle.imageUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="absolute top-2 right-2 p-1.5 bg-black/40 backdrop-blur-md rounded-lg text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/60"
+                      >
+                        <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <EmptySection message="No vehicle registered yet" />

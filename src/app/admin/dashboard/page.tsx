@@ -294,7 +294,7 @@ const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, i
         href={
           color === 'blue' ? `/admin/partners/${id}` : 
           color === 'green' ? `/admin/kyc/${id}` : 
-          '#'
+          `/admin/vehicles/${id}`
         }
         className={`px-5 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 ${
           color === 'blue' ? 'bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white' :
