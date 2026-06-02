@@ -13,6 +13,10 @@ export default auth((req) => {
   const { allowed, redirectTo } = checkAccess(nextUrl.pathname, role)
 
   if (!allowed && redirectTo) {
+    // If it's an API route, return 401 JSON instead of redirecting
+    if (nextUrl.pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     return NextResponse.redirect(new URL(redirectTo, nextUrl))
   }
 

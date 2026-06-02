@@ -3,15 +3,17 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
 import { signOut, useSession } from 'next-auth/react'
 import { Menu, X, User as UserIcon, LogOut, Briefcase } from 'lucide-react'
 
-const Navbar = ({ onLogin }: { onLogin: () => void }) => {
+const Navbar = ({ onLogin }: { onLogin?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const router = useRouter()
   const [scrolled, setScrolled] = useState(false)
   const { user: reduxUser } = useSelector((state: RootState) => state.user)
   const { data: session, status } = useSession()
@@ -126,7 +128,7 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
             </div>
           ) : (
             <button 
-              onClick={onLogin}
+              onClick={() => onLogin ? onLogin() : router.push('/')}
               className="px-6 py-2.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all duration-300 cursor-pointer"
             >
               Sign In
@@ -201,7 +203,8 @@ const Navbar = ({ onLogin }: { onLogin: () => void }) => {
             ) : (
               <button 
                 onClick={() => {
-                  onLogin();
+                  if (onLogin) onLogin();
+                  else router.push('/');
                   setIsOpen(false);
                 }}
                 className="w-full py-3 bg-white text-black font-bold rounded-xl mt-2 cursor-pointer"

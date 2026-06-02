@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { motion } from 'motion/react'
 import toast from 'react-hot-toast'
+import DriverRidesList from '@/components/DriverRidesList'
 
 const steps = [
   { id: 1, title: 'Vehicle Details', icon: Car, route: '/partner/onboarding/vehicle', description: 'Basic info about your ride' },
@@ -226,6 +227,9 @@ export default function PartnerDashboard() {
           })}
         </div>
 
+        {partnerStatus === 'approved' && (
+          <DriverRidesList />
+        )}
 
       </div>
     </div>

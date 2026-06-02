@@ -19,7 +19,14 @@ const PublicHome = ({ onAuthOpen, authOpen, setAuthOpen }: PublicHomeProps) => {
       <HeroSection onBookNow={() => setBookingOpen(true)} />
       <VehicleSlider />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
-      <BookingModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <BookingModal 
+        open={bookingOpen} 
+        onClose={() => setBookingOpen(false)} 
+        onRequireLogin={() => {
+          setBookingOpen(false)
+          setAuthOpen(true)
+        }}
+      />
     </>
   );
 };

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { X, MapPin, Phone, Car, Navigation, ChevronRight, LocateFixed, Loader2, Map } from 'lucide-react'
 import toast from 'react-hot-toast'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 
 // Dynamically import the map to avoid SSR issues with Leaflet window object
 const MapPicker = dynamic(() => import('./MapPicker'), { ssr: false })
@@ -12,6 +13,7 @@ const MapPicker = dynamic(() => import('./MapPicker'), { ssr: false })
 interface BookingModalProps {
   open: boolean
   onClose: () => void
+  onRequireLogin?: () => void
 }
 
 const vehicleTypes = [
@@ -197,15 +199,16 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
   )
 }
 
-const BookingModal = ({ open, onClose }: BookingModalProps) => {
+const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
   const [pickup, setPickup] = useState('')
   const [drop, setDrop] = useState('')
   const [mobile, setMobile] = useState('')
   const [vehicle, setVehicle] = useState('Car')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mapPickerTarget, setMapPickerTarget] = useState<'pickup' | 'drop' | null>(null)
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!pickup || !drop || !mobile || !vehicle) {
@@ -220,16 +223,40 @@ const BookingModal = ({ open, onClose }: BookingModalProps) => {
 
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast.success("Booking requested! Our team will contact you shortly.")
-      setPickup('')
-      setDrop('')
-      setMobile('')
-      setVehicle('Car')
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pickup, drop, mobileNumber: mobile, vehicleType: vehicle })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          toast.error("Please login first to book a ride.")
+          if (onRequireLogin) {
+            onRequireLogin()
+          } else {
+            onClose() // Close modal so they can login via main screen
+          }
+        } else {
+          toast.error(data.error || 'Failed to create booking')
+        }
+        setIsSubmitting(false)
+        return
+      }
+
+      toast.success("Booking created! Finding a driver...")
       onClose()
-    }, 1500)
+      
+      // Redirect to the new tracking page
+      router.push(`/booking/${data.bookingId}/tracking`)
+      
+    } catch (error) {
+      toast.error('Network error. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
