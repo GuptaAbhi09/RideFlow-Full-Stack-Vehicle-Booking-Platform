@@ -1,9 +1,13 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { X, MapPin, Phone, Car, Navigation, ChevronRight } from 'lucide-react'
+import { X, MapPin, Phone, Car, Navigation, ChevronRight, LocateFixed, Loader2, Map } from 'lucide-react'
 import toast from 'react-hot-toast'
+import dynamic from 'next/dynamic'
+
+// Dynamically import the map to avoid SSR issues with Leaflet window object
+const MapPicker = dynamic(() => import('./MapPicker'), { ssr: false })
 
 interface BookingModalProps {
   open: boolean
@@ -14,12 +18,192 @@ const vehicleTypes = [
   "Bike", "Car", "Auto", "SUV", "Loader", "Bus", "Truck"
 ]
 
+// Custom Hook for clicking outside an element
+function useOnClickOutside(ref: React.RefObject<HTMLDivElement | null>, handler: () => void) {
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) return;
+      handler();
+    };
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]);
+}
+
+interface LocationInputProps {
+  label: string
+  icon: React.ReactNode
+  placeholder: string
+  value: string
+  onChange: (val: string) => void
+  showCurrentLocation?: boolean
+  inputColor: string
+  onMapClick?: () => void
+}
+
+const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentLocation, inputColor, onMapClick }: LocationInputProps) => {
+  const [suggestions, setSuggestions] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [fetchingLocation, setFetchingLocation] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useOnClickOutside(dropdownRef, () => setShowDropdown(false))
+
+  // Debounced search using OpenStreetMap Nominatim API
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (value && value.length > 2 && showDropdown) {
+        setLoading(true)
+        try {
+          // Using free OSM API for suggestions
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value)}&countrycodes=in&limit=5`)
+          const data = await res.json()
+          setSuggestions(data)
+        } catch (error) {
+          console.error("Failed to fetch suggestions", error)
+        } finally {
+          setLoading(false)
+        }
+      } else {
+        setSuggestions([])
+      }
+    }, 500)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [value, showDropdown])
+
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser")
+      return
+    }
+
+    setFetchingLocation(true)
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      try {
+        const { latitude, longitude } = position.coords
+        // Reverse geocode to get a readable address
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+        const data = await res.json()
+        
+        if (data && data.display_name) {
+          onChange(data.display_name)
+          setShowDropdown(false)
+          toast.success("Location detected!")
+        } else {
+          onChange(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+        }
+      } catch (error) {
+        toast.error("Failed to get address from coordinates")
+      } finally {
+        setFetchingLocation(false)
+      }
+    }, () => {
+      toast.error("Unable to retrieve your location. Please allow permissions.")
+      setFetchingLocation(false)
+    })
+  }
+
+  const handleSelect = (address: string) => {
+    onChange(address)
+    setShowDropdown(false)
+  }
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <div className="flex justify-between items-end mb-2">
+        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+          {label}
+        </label>
+        {onMapClick && (
+          <button 
+            type="button" 
+            onClick={onMapClick}
+            className={`text-[10px] font-bold uppercase tracking-wider text-${inputColor}-400 flex items-center gap-1 hover:text-${inputColor}-300 transition-colors`}
+          >
+            <Map size={12} /> Choose on Map
+          </button>
+        )}
+      </div>
+      <div className="relative flex gap-2">
+        <div className="relative flex-1">
+          <div className={`absolute left-4 top-3.5 text-${inputColor}-500`}>
+            {icon}
+          </div>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => {
+              onChange(e.target.value)
+              setShowDropdown(true)
+            }}
+            onFocus={() => setShowDropdown(true)}
+            placeholder={placeholder}
+            className={`w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-${showCurrentLocation ? '12' : '4'} py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-${inputColor}-500 focus:ring-1 focus:ring-${inputColor}-500 transition-all text-sm`}
+            required
+          />
+          
+          {showCurrentLocation && (
+            <button
+              type="button"
+              onClick={handleGetCurrentLocation}
+              disabled={fetchingLocation}
+              className="absolute right-3 top-2.5 p-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+              title="Use Current Location"
+            >
+              {fetchingLocation ? <Loader2 size={16} className="animate-spin" /> : <LocateFixed size={16} />}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Autocomplete Dropdown */}
+      <AnimatePresence>
+        {showDropdown && (value.length > 2) && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="absolute z-50 w-full mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto"
+          >
+            {loading ? (
+              <div className="p-4 text-center text-gray-500 text-sm flex justify-center items-center gap-2">
+                <Loader2 size={14} className="animate-spin" /> Searching...
+              </div>
+            ) : suggestions.length > 0 ? (
+              suggestions.map((s, i) => (
+                <div
+                  key={i}
+                  onClick={() => handleSelect(s.display_name)}
+                  className="px-4 py-3 hover:bg-white/5 cursor-pointer border-b border-white/5 last:border-0 transition-colors"
+                >
+                  <p className="text-sm text-gray-200 line-clamp-2">{s.display_name}</p>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500 text-sm">
+                No results found
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 const BookingModal = ({ open, onClose }: BookingModalProps) => {
   const [pickup, setPickup] = useState('')
   const [drop, setDrop] = useState('')
   const [mobile, setMobile] = useState('')
   const [vehicle, setVehicle] = useState('Car')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [mapPickerTarget, setMapPickerTarget] = useState<'pickup' | 'drop' | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,6 +233,7 @@ const BookingModal = ({ open, onClose }: BookingModalProps) => {
   }
 
   return (
+    <>
     <AnimatePresence>
       {open && (
         <>
@@ -81,45 +266,28 @@ const BookingModal = ({ open, onClose }: BookingModalProps) => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-4">
                   
-                  {/* Pickup Location */}
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                      Pickup Location
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-3.5 text-blue-500">
-                        <MapPin size={18} />
-                      </div>
-                      <input
-                        type="text"
-                        value={pickup}
-                        onChange={(e) => setPickup(e.target.value)}
-                        placeholder="Current Location"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
+                  {/* Enhanced Pickup Location */}
+                  <LocationInput
+                    label="Pickup Location"
+                    icon={<MapPin size={18} />}
+                    placeholder="Search pickup or use current..."
+                    value={pickup}
+                    onChange={setPickup}
+                    showCurrentLocation={true}
+                    inputColor="blue"
+                    onMapClick={() => setMapPickerTarget('pickup')}
+                  />
 
-                  {/* Drop Location */}
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                      Drop Location
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-3.5 text-red-500">
-                        <Navigation size={18} />
-                      </div>
-                      <input
-                        type="text"
-                        value={drop}
-                        onChange={(e) => setDrop(e.target.value)}
-                        placeholder="Destination"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
+                  {/* Enhanced Drop Location */}
+                  <LocationInput
+                    label="Drop Location"
+                    icon={<Navigation size={18} />}
+                    placeholder="Search destination..."
+                    value={drop}
+                    onChange={setDrop}
+                    inputColor="red"
+                    onMapClick={() => setMapPickerTarget('drop')}
+                  />
 
                   {/* Mobile Number */}
                   <div>
@@ -133,7 +301,8 @@ const BookingModal = ({ open, onClose }: BookingModalProps) => {
                       <input
                         type="tel"
                         value={mobile}
-                        onChange={(e) => setMobile(e.target.value)}
+                        onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))} // Only allow numbers
+                        maxLength={10}
                         placeholder="Enter 10-digit number"
                         className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
                         required
@@ -190,6 +359,17 @@ const BookingModal = ({ open, onClose }: BookingModalProps) => {
         </>
       )}
     </AnimatePresence>
+    
+    {mapPickerTarget && (
+      <MapPicker 
+        onClose={() => setMapPickerTarget(null)}
+        onSelect={(address) => {
+          if (mapPickerTarget === 'pickup') setPickup(address)
+          if (mapPickerTarget === 'drop') setDrop(address)
+        }}
+      />
+    )}
+    </>
   )
 }
 
