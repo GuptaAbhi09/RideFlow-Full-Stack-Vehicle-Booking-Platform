@@ -1,8 +1,12 @@
 "use client"
 
-import React, { useState } from 'react'
-import { MapPin, Navigation, Car, Users } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { MapPin, Navigation, Car, Users, XCircle } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { getSocket } from '@/lib/socket'
+import { useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 // Dynamically import MapTracking to avoid SSR issues
 const MapTracking = dynamic(() => import('./MapTracking'), { ssr: false, loading: () => <div className="h-64 flex items-center justify-center text-gray-500">Loading Map...</div> })
@@ -20,6 +24,101 @@ interface TrackingDashboardProps {
 const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
   const [distance, setDistance] = useState<string | null>(null)
   const [duration, setDuration] = useState<string | null>(null)
+  const [currentStatus, setCurrentStatus] = useState(booking.status)
+  const [driverInfo, setDriverInfo] = useState<any>(null)
+  const [driverLocation, setDriverLocation] = useState<{ lat: number, lng: number } | null>(null)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const { data: session } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    // Socket.IO Push Architecture Integration
+    if (session?.user?.id) {
+      const socket = getSocket()
+      
+      const registerAndJoin = () => {
+        // Register this customer with the socket server
+        socket.emit('register_user', {
+          userId: session.user.id,
+          role: 'customer'
+        })
+
+        // If already accepted, join the tracking room immediately
+        if (booking.status === 'accepted' || currentStatus === 'accepted') {
+          socket.emit('join_ride', { rideId: booking.id })
+        }
+      }
+
+      // Initial run
+      registerAndJoin()
+
+      // Handle network reconnects (e.g., app backgrounded and restored)
+      socket.on('connect', registerAndJoin)
+
+      // Listen for when a driver accepts the ride
+      const handleRideAccepted = (data: any) => {
+        if (data.rideId === booking.id) {
+          setCurrentStatus('accepted')
+          setDriverInfo({
+            name: data.driverName,
+            vehicleDetails: data.vehicleDetails
+          })
+          // Instantly join the live tracking room
+          socket.emit('join_ride', { rideId: booking.id })
+        }
+      }
+
+      // Listen for live GPS updates from the driver
+      const handleLocationUpdate = (data: any) => {
+        setDriverLocation({
+          lat: data.latitude,
+          lng: data.longitude
+        })
+      }
+
+      // Listen for if the driver cancels the ride
+      const handleRideCancelled = (data: any) => {
+        if (data.rideId === booking.id) {
+          toast.error("The driver has cancelled this ride.")
+          router.push('/') // Send back to home
+        }
+      }
+
+      socket.on('ride_accepted', handleRideAccepted)
+      socket.on('driver_location_updated', handleLocationUpdate)
+      socket.on('ride_cancelled', handleRideCancelled)
+
+      return () => {
+        socket.off('connect', registerAndJoin)
+        socket.off('ride_accepted', handleRideAccepted)
+        socket.off('driver_location_updated', handleLocationUpdate)
+        socket.off('ride_cancelled', handleRideCancelled)
+      }
+    }
+  }, [session, booking.id, booking.status, currentStatus, router])
+
+  const handleCancelRide = async () => {
+    if (confirm("Are you sure you want to cancel this ride request?")) {
+      setIsCancelling(true)
+      try {
+        const res = await fetch(`/api/bookings/${booking.id}/cancel`, { method: 'POST' })
+        const data = await res.json()
+        
+        if (res.ok) {
+          toast.success("Ride cancelled successfully.")
+          const socket = getSocket()
+          socket.emit('cancel_ride', { rideId: booking.id, customerId: session?.user?.id })
+          router.push('/')
+        } else {
+          toast.error(data.error || "Failed to cancel ride.")
+          setIsCancelling(false)
+        }
+      } catch (error) {
+        toast.error("Network error.")
+        setIsCancelling(false)
+      }
+    }
+  }
 
   return (
     <div className="h-screen bg-[#0a0a0a] pt-[72px] flex flex-col md:flex-row overflow-hidden">
@@ -29,6 +128,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         <MapTracking 
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
+          driverLocation={driverLocation}
           onRouteCalculated={(dist, dur) => {
             setDistance(dist)
             setDuration(dur)
@@ -48,7 +148,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             </p>
           </div>
           <div>
-            {booking.status === 'searching' ? (
+            {currentStatus === 'searching' ? (
               <div className="flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -57,8 +157,8 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
                 <span className="text-blue-400 text-xs font-bold tracking-wide uppercase">Finding Driver</span>
               </div>
             ) : (
-              <span className="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-wide uppercase border border-blue-500/20">
-                {booking.status}
+              <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold tracking-wide uppercase border border-emerald-500/20">
+                {currentStatus}
               </span>
             )}
           </div>
@@ -128,6 +228,22 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             </div>
           </div>
         </div>
+
+        {/* Cancel Button */}
+        <button
+          onClick={handleCancelRide}
+          disabled={isCancelling}
+          className="w-full py-4 mt-auto bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          {isCancelling ? (
+            <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+          ) : (
+            <>
+              <XCircle size={18} />
+              Cancel Ride
+            </>
+          )}
+        </button>
 
       </div>
 

@@ -38,14 +38,16 @@ export default function PartnerDashboard() {
   const router = useRouter()
   const [userData, setUserData] = useState<any>(null)
   const [vehicleData, setVehicleData] = useState<any>(null)
+  const [activeRide, setActiveRide] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, vehicleRes] = await Promise.all([
+        const [userRes, vehicleRes, activeRideRes] = await Promise.all([
           fetch('/api/user/me'),
-          fetch('/api/partner/onboarding/vehicle')
+          fetch('/api/partner/onboarding/vehicle'),
+          fetch('/api/driver/active-ride')
         ])
         
         if (userRes.ok) {
@@ -56,6 +58,11 @@ export default function PartnerDashboard() {
         if (vehicleRes.ok) {
           const vehicleData = await vehicleRes.json()
           setVehicleData(vehicleData.vehicle)
+        }
+
+        if (activeRideRes.ok) {
+          const rideData = await activeRideRes.json()
+          setActiveRide(rideData.activeBooking)
         }
       } catch (error) {
         console.error("Dashboard error:", error)
@@ -159,6 +166,32 @@ export default function PartnerDashboard() {
           </motion.div>
         )}
 
+        {/* Active Trip Banner */}
+        {activeRide && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8 p-6 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl shadow-emerald-500/20"
+          >
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 p-3 rounded-2xl shrink-0">
+                <Car className="text-white" size={28} />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-white text-xl">Active Trip in Progress</h4>
+                <p className="text-emerald-100 mt-1 font-medium">You have an ongoing ride. Please complete it.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => router.push(`/partner/dashboard/rides/${activeRide.id}`)}
+              className="px-6 py-3 bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 w-full md:w-auto justify-center"
+            >
+              Resume Active Trip
+              <ChevronRight size={18} />
+            </button>
+          </motion.div>
+        )}
+
         {/* Progress Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {steps.map((step) => {
@@ -227,7 +260,7 @@ export default function PartnerDashboard() {
           })}
         </div>
 
-        {partnerStatus === 'approved' && (
+        {partnerStatus === 'approved' && !activeRide && (
           <DriverRidesList />
         )}
 

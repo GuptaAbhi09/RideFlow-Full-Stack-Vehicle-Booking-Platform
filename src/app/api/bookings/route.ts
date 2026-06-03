@@ -19,6 +19,19 @@ export async function POST(req: Request) {
 
     await connectDb();
 
+    // Safety check: Does the user already have an active booking?
+    const existingBooking = await Booking.findOne({
+      customerId: session.user.id,
+      status: { $in: ["searching", "accepted"] }
+    });
+
+    if (existingBooking) {
+      return NextResponse.json({ 
+        error: "You already have an active ride request.",
+        activeBookingId: existingBooking._id 
+      }, { status: 409 });
+    }
+
     // Create a new booking with initial state 'searching'
     const newBooking = await Booking.create({
       customerId: session.user.id, // Assuming session.user has id

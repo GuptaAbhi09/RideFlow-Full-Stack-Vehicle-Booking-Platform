@@ -6,6 +6,8 @@ import { X, MapPin, Phone, Car, Navigation, ChevronRight, LocateFixed, Loader2, 
 import toast from 'react-hot-toast'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { getSocket } from '@/lib/socket'
 
 // Dynamically import the map to avoid SSR issues with Leaflet window object
 const MapPicker = dynamic(() => import('./MapPicker'), { ssr: false })
@@ -207,6 +209,7 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mapPickerTarget, setMapPickerTarget] = useState<'pickup' | 'drop' | null>(null)
   const router = useRouter()
+  const { data: session } = useSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -240,6 +243,10 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
           } else {
             onClose() // Close modal so they can login via main screen
           }
+        } else if (res.status === 409 && data.activeBookingId) {
+          toast.error("You already have an active ride request!")
+          onClose()
+          router.push(`/booking/${data.activeBookingId}/tracking`)
         } else {
           toast.error(data.error || 'Failed to create booking')
         }
@@ -248,6 +255,27 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
       }
 
       toast.success("Booking created! Finding a driver...")
+      
+      // Emit via socket to notify drivers instantly
+      if (session?.user) {
+        const socket = getSocket();
+        
+        // Ensure user is registered as customer
+        socket.emit('register_user', {
+          userId: session.user.id,
+          role: session.user.role
+        });
+
+        // Emit the ride request
+        socket.emit('request_ride', {
+          rideId: data.bookingId,
+          pickup: pickup,
+          drop: drop,
+          fare: "TBD", // You could calculate this beforehand
+          customerName: session.user.name
+        });
+      }
+
       onClose()
       
       // Redirect to the new tracking page

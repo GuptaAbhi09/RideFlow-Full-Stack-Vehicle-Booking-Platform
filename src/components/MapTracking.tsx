@@ -17,10 +17,18 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
+const carIcon = new L.DivIcon({
+  html: '<div style="font-size: 20px; background: #1a1a1a; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">🚕</div>',
+  className: '',
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
+
 interface MapTrackingProps {
   pickupAddress: string
   dropAddress: string
   onRouteCalculated?: (distance: string, duration: string) => void
+  driverLocation?: { lat: number; lng: number } | null
 }
 
 // Component to automatically fit the map bounds to the route
@@ -34,7 +42,7 @@ const MapFitter = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
   return null
 }
 
-const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated }: MapTrackingProps) => {
+const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLocation }: MapTrackingProps) => {
   const [pickupCoords, setPickupCoords] = useState<L.LatLngTuple | null>(null)
   const [dropCoords, setDropCoords] = useState<L.LatLngTuple | null>(null)
   const [routeCoordinates, setRouteCoordinates] = useState<L.LatLngTuple[]>([])
@@ -130,8 +138,12 @@ const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated }: MapTrack
     )
   }
 
-  // Calculate bounds to fit both points and the route
-  const bounds = L.latLngBounds([pickupCoords, dropCoords])
+  // Calculate bounds to fit both points, the route, and the driver
+  const points = [pickupCoords, dropCoords]
+  if (driverLocation) {
+    points.push([driverLocation.lat, driverLocation.lng] as L.LatLngTuple)
+  }
+  const bounds = L.latLngBounds(points)
 
   return (
     <div className="w-full h-full min-h-[300px] rounded-2xl overflow-hidden border border-white/10 relative z-0">
@@ -147,6 +159,10 @@ const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated }: MapTrack
         
         <Marker position={pickupCoords} icon={customIcon} />
         <Marker position={dropCoords} icon={customIcon} />
+        
+        {driverLocation && (
+          <Marker position={[driverLocation.lat, driverLocation.lng]} icon={carIcon} />
+        )}
         
         {routeCoordinates.length > 0 && (
           <Polyline 

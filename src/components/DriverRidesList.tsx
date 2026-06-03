@@ -5,6 +5,8 @@ import { MapPin, Navigation, Car, RefreshCw, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/navigation'
+import { getSocket } from '@/lib/socket'
+import { useSession } from 'next-auth/react'
 
 export default function DriverRidesList() {
   const [rides, setRides] = useState<any[]>([])
@@ -12,6 +14,7 @@ export default function DriverRidesList() {
   const [refreshing, setRefreshing] = useState(false)
   const [acceptingId, setAcceptingId] = useState<string | null>(null)
   const router = useRouter()
+  const { data: session } = useSession()
 
   const fetchRides = useCallback(async (isRefresh = false) => {
     try {
@@ -35,13 +38,40 @@ export default function DriverRidesList() {
   useEffect(() => {
     fetchRides()
     
-    // Optional: Auto-poll every 15 seconds (poor man's real-time before Phase 4)
-    const interval = setInterval(() => {
-      fetchRides()
-    }, 15000)
-    
-    return () => clearInterval(interval)
-  }, [fetchRides])
+    // Socket.IO Push Architecture Integration
+    if (session?.user?.id) {
+      const socket = getSocket()
+      
+      // Register this driver with the socket server
+      socket.emit('register_user', {
+        userId: session.user.id,
+        role: 'partner'
+      })
+
+      // Listen for instant ride requests from customers
+      const handleNewRide = (data: any) => {
+        toast.success("New Ride Request!")
+        
+        // Map the socket data to our local state shape
+        const newRide = {
+          _id: data.rideId,
+          pickup: data.pickup,
+          drop: data.drop,
+          vehicleType: "Any", // We'll assume the REST call would have this, but for real-time demo we can mock or wait for full fetch
+          createdAt: new Date().toISOString()
+        }
+        
+        // Prepend to list
+        setRides(prev => [newRide, ...prev])
+      }
+
+      socket.on('new_ride_request', handleNewRide)
+
+      return () => {
+        socket.off('new_ride_request', handleNewRide)
+      }
+    }
+  }, [fetchRides, session])
 
   const handleAcceptRide = async (rideId: string) => {
     try {
@@ -56,8 +86,19 @@ export default function DriverRidesList() {
         // Remove from the local list since it's no longer 'searching'
         setRides(prev => prev.filter(r => r._id !== rideId))
         
-        // TODO: In a real app, redirect to a "Live Trip Tracking" view for the driver
-        // router.push(`/partner/dashboard/rides/${rideId}`)
+        // Notify the customer instantly via Socket.IO
+        if (session?.user) {
+          const socket = getSocket()
+          socket.emit('accept_ride', {
+            rideId: rideId,
+            customerId: data.booking.customerId, // ensure backend returns booking details
+            driverName: session.user.name,
+            vehicleDetails: "Assigned Vehicle" // from DB later
+          })
+        }
+        
+        // Redirect to the "Live Trip Tracking" view for the driver
+        router.push(`/partner/dashboard/rides/${rideId}`)
       } else {
         toast.error(data.error || "Failed to accept ride")
         // If someone else accepted it, refresh the list
