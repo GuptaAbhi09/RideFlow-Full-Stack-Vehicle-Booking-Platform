@@ -270,7 +270,10 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
         socket.emit('request_ride', {
           rideId: data.bookingId,
           pickup: pickup,
+          pickupLat: data.pickupLat,
+          pickupLng: data.pickupLng,
           drop: drop,
+          vehicleType: data.vehicleType,
           fare: "TBD", // You could calculate this beforehand
           customerName: session.user.name
         });

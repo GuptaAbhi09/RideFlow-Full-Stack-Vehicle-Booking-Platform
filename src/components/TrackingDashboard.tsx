@@ -28,6 +28,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
   const [driverInfo, setDriverInfo] = useState<any>(null)
   const [driverLocation, setDriverLocation] = useState<{ lat: number, lng: number } | null>(null)
   const [isCancelling, setIsCancelling] = useState(false)
+  const [notifiedCount, setNotifiedCount] = useState<number | string>('Scanning...')
   const { data: session } = useSession()
   const router = useRouter()
 
@@ -58,6 +59,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
       // Listen for when a driver accepts the ride
       const handleRideAccepted = (data: any) => {
         if (data.rideId === booking.id) {
+          toast.success(`Driver ${data.driverName || ''} has accepted your ride!`)
           setCurrentStatus('accepted')
           setDriverInfo({
             name: data.driverName,
@@ -84,15 +86,41 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         }
       }
 
+      // Handle no drivers found in 5km radius
+      const handleNoDriversFound = async (data: any) => {
+        if (data.rideId === booking.id) {
+          toast.error("No vehicles found nearby. Please try again later.")
+          setNotifiedCount(0)
+          
+          // Auto-cancel the ride in the database so it doesn't stay 'searching'
+          try {
+            await fetch(`/api/bookings/${booking.id}/cancel`, { method: 'POST' })
+            router.push('/')
+          } catch (e) {
+            console.error(e)
+            router.push('/')
+          }
+        }
+      }
+
+      // Handle exact number of drivers notified by the Uber Algorithm
+      const handleDriversNotified = (data: any) => {
+        setNotifiedCount(data.count)
+      }
+
       socket.on('ride_accepted', handleRideAccepted)
       socket.on('driver_location_updated', handleLocationUpdate)
       socket.on('ride_cancelled', handleRideCancelled)
+      socket.on('no_drivers_found', handleNoDriversFound)
+      socket.on('drivers_notified', handleDriversNotified)
 
       return () => {
         socket.off('connect', registerAndJoin)
         socket.off('ride_accepted', handleRideAccepted)
         socket.off('driver_location_updated', handleLocationUpdate)
         socket.off('ride_cancelled', handleRideCancelled)
+        socket.off('no_drivers_found', handleNoDriversFound)
+        socket.off('drivers_notified', handleDriversNotified)
       }
     }
   }, [session, booking.id, booking.status, currentStatus, router])
@@ -179,13 +207,21 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
 
           <div className="bg-gradient-to-br from-emerald-900/20 to-emerald-900/5 border border-emerald-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Network</p>
+              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                {currentStatus === 'searching' ? 'Network' : 'Status'}
+              </p>
               <Users size={14} className="text-emerald-400" />
             </div>
             <div className="flex items-baseline gap-1 text-white">
-              <span className="text-2xl font-extrabold">5</span>
+              <span className={`font-extrabold ${typeof notifiedCount === 'string' && currentStatus === 'searching' ? 'text-lg text-emerald-300' : 'text-xl'}`}>
+                {currentStatus === 'searching' ? notifiedCount : 'Assigned'}
+              </span>
             </div>
-            <span className="text-gray-400 text-xs font-medium">Drivers Nearby</span>
+            <span className="text-gray-400 text-xs font-medium">
+              {currentStatus === 'searching' 
+                ? (typeof notifiedCount === 'string' ? `Looking for ${booking.vehicleType}s` : `Drivers Pinged`)
+                : `Driver is on the way`}
+            </span>
           </div>
         </div>
 

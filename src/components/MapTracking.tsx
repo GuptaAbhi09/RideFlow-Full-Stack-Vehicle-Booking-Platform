@@ -57,15 +57,38 @@ const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLoca
         setLoading(true)
         setError(null)
 
+        // Helper function for resilient geocoding
+        const geocodeAddress = async (address: string) => {
+          let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+          let data = await res.json()
+          if (data && data.length > 0) return data
+
+          // Fallback: if address is too specific (e.g. B-14, Kalyani City...), Nominatim fails.
+          // Let's strip the first part and try again.
+          const parts = address.split(',')
+          if (parts.length > 2) {
+            // Try with just the last 3 parts (usually City, State, Country)
+            const fallbackAddress = parts.slice(-3).join(',')
+            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fallbackAddress)}&limit=1`)
+            data = await res.json()
+            if (data && data.length > 0) return data
+            
+            // Try with just the last 2 parts
+            const finalFallback = parts.slice(-2).join(',')
+            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(finalFallback)}&limit=1`)
+            data = await res.json()
+            if (data && data.length > 0) return data
+          }
+          return null
+        }
+
         // 1. Geocode Pickup
-        const pickupRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pickupAddress)}&limit=1`)
-        const pickupData = await pickupRes.json()
+        const pickupData = await geocodeAddress(pickupAddress)
 
         // 2. Geocode Drop
-        const dropRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dropAddress)}&limit=1`)
-        const dropData = await dropRes.json()
+        const dropData = await geocodeAddress(dropAddress)
 
-        if (!pickupData.length || !dropData.length) {
+        if (!pickupData || !dropData) {
           throw new Error("Could not find coordinates for the provided addresses.")
         }
 

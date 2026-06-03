@@ -7,6 +7,8 @@ export interface IBooking extends Document {
   customerId: mongoose.Types.ObjectId
   driverId?: mongoose.Types.ObjectId
   pickup: string
+  pickupLat?: number
+  pickupLng?: number
   drop: string
   mobileNumber: string
   vehicleType: typeof vehicleTypeEnum[number]
@@ -31,6 +33,12 @@ const bookingSchema = new Schema<IBooking>({
   pickup: {
     type: String,
     required: true
+  },
+  pickupLat: {
+    type: Number
+  },
+  pickupLng: {
+    type: Number
   },
   drop: {
     type: String,
