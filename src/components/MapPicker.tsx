@@ -19,7 +19,7 @@ const customIcon = new L.Icon({
 });
 
 interface MapPickerProps {
-  onSelect: (address: string) => void
+  onSelect: (address: string, lat?: number, lng?: number) => void
   onClose: () => void
   initialLat?: number
   initialLng?: number
@@ -113,7 +113,7 @@ const MapPicker = ({ onSelect, onClose, initialLat = 20.5937, initialLng = 78.96
       toast.error("Please wait for address to resolve or click on map")
       return
     }
-    onSelect(address)
+    onSelect(address, position?.lat, position?.lng)
     onClose()
   }
 

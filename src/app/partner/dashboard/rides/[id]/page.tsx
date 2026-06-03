@@ -20,7 +20,11 @@ export default async function DriverActiveTripPage(props: { params: Promise<{ id
     status: booking.status,
     pickup: booking.pickup,
     drop: booking.drop,
-    vehicleType: booking.vehicleType
+    vehicleType: booking.vehicleType,
+    pickupLat: booking.pickupLat,
+    pickupLng: booking.pickupLng,
+    dropLat: booking.dropLat,
+    dropLng: booking.dropLng
   }
 
   return (

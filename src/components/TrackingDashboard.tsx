@@ -18,6 +18,12 @@ interface TrackingDashboardProps {
     pickup: string
     drop: string
     vehicleType: string
+    fare?: number
+    distance?: string
+    pickupLat?: number
+    pickupLng?: number
+    dropLat?: number
+    dropLng?: number
   }
 }
 
@@ -157,6 +163,8 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
           driverLocation={driverLocation}
+          exactPickup={booking.pickupLat && booking.pickupLng ? { lat: booking.pickupLat, lng: booking.pickupLng } : undefined}
+          exactDrop={booking.dropLat && booking.dropLng ? { lat: booking.dropLat, lng: booking.dropLng } : undefined}
           onRouteCalculated={(dist, dur) => {
             setDistance(dist)
             setDuration(dur)
@@ -193,36 +201,36 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         </div>
 
         {/* Estimation & Available Drivers (Mock Data) */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className={`grid ${currentStatus !== 'searching' ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
           <div className="bg-gradient-to-br from-blue-900/20 to-blue-900/5 border border-blue-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <p className="text-blue-400 text-[10px] font-bold uppercase tracking-wider">Trip Estimate</p>
               <Navigation size={14} className="text-blue-400" />
             </div>
             <div className="flex items-baseline gap-1 text-white">
-              <span className="text-2xl font-extrabold">{duration || '--'}</span>
+              <span className="text-2xl font-extrabold">{booking.fare ? `₹${booking.fare}` : duration || '--'}</span>
             </div>
-            <span className="text-gray-400 text-xs font-medium">{distance || 'Calculating...'}</span>
+            <span className="text-gray-400 text-xs font-medium">{booking.distance ? `${booking.distance}` : distance || 'Calculating...'}</span>
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-900/20 to-emerald-900/5 border border-emerald-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-                {currentStatus === 'searching' ? 'Network' : 'Status'}
-              </p>
-              <Users size={14} className="text-emerald-400" />
-            </div>
-            <div className="flex items-baseline gap-1 text-white">
-              <span className={`font-extrabold ${typeof notifiedCount === 'string' && currentStatus === 'searching' ? 'text-lg text-emerald-300' : 'text-xl'}`}>
-                {currentStatus === 'searching' ? notifiedCount : 'Assigned'}
+          {currentStatus !== 'searching' && (
+            <div className="bg-gradient-to-br from-emerald-900/20 to-emerald-900/5 border border-emerald-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                  Status
+                </p>
+                <Users size={14} className="text-emerald-400" />
+              </div>
+              <div className="flex items-baseline gap-1 text-white">
+                <span className="font-extrabold text-xl">
+                  Assigned
+                </span>
+              </div>
+              <span className="text-gray-400 text-xs font-medium">
+                Driver is on the way
               </span>
             </div>
-            <span className="text-gray-400 text-xs font-medium">
-              {currentStatus === 'searching' 
-                ? (typeof notifiedCount === 'string' ? `Looking for ${booking.vehicleType}s` : `Drivers Pinged`)
-                : `Driver is on the way`}
-            </span>
-          </div>
+          )}
         </div>
 
         {/* Details */}

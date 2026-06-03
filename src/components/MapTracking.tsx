@@ -29,6 +29,8 @@ interface MapTrackingProps {
   dropAddress: string
   onRouteCalculated?: (distance: string, duration: string) => void
   driverLocation?: { lat: number; lng: number } | null
+  exactPickup?: { lat: number; lng: number }
+  exactDrop?: { lat: number; lng: number }
 }
 
 // Component to automatically fit the map bounds to the route
@@ -42,7 +44,7 @@ const MapFitter = ({ bounds }: { bounds: L.LatLngBoundsExpression }) => {
   return null
 }
 
-const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLocation }: MapTrackingProps) => {
+const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLocation, exactPickup, exactDrop }: MapTrackingProps) => {
   const [pickupCoords, setPickupCoords] = useState<L.LatLngTuple | null>(null)
   const [dropCoords, setDropCoords] = useState<L.LatLngTuple | null>(null)
   const [routeCoordinates, setRouteCoordinates] = useState<L.LatLngTuple[]>([])
@@ -59,7 +61,9 @@ const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLoca
 
         // Helper function for resilient geocoding
         const geocodeAddress = async (address: string) => {
-          let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+          const headers = { 'User-Agent': 'RideFlowApp/1.0' }
+          let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`, { headers })
+          if (!res.ok) return null
           let data = await res.json()
           if (data && data.length > 0) return data
 
@@ -69,33 +73,42 @@ const MapTracking = ({ pickupAddress, dropAddress, onRouteCalculated, driverLoca
           if (parts.length > 2) {
             // Try with just the last 3 parts (usually City, State, Country)
             const fallbackAddress = parts.slice(-3).join(',')
-            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fallbackAddress)}&limit=1`)
-            data = await res.json()
-            if (data && data.length > 0) return data
+            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fallbackAddress)}&limit=1`, { headers })
+            if (res.ok) {
+              data = await res.json()
+              if (data && data.length > 0) return data
+            }
             
             // Try with just the last 2 parts
             const finalFallback = parts.slice(-2).join(',')
-            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(finalFallback)}&limit=1`)
-            data = await res.json()
-            if (data && data.length > 0) return data
+            res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(finalFallback)}&limit=1`, { headers })
+            if (res.ok) {
+              data = await res.json()
+              if (data && data.length > 0) return data
+            }
           }
           return null
         }
 
-        // 1. Geocode Pickup
-        const pickupData = await geocodeAddress(pickupAddress)
-
-        // 2. Geocode Drop
-        const dropData = await geocodeAddress(dropAddress)
-
-        if (!pickupData || !dropData) {
-          throw new Error("Could not find coordinates for the provided addresses.")
+        // 1. Get Pickup
+        let pLat = exactPickup?.lat
+        let pLon = exactPickup?.lng
+        if (!pLat || !pLon) {
+          const pickupData = await geocodeAddress(pickupAddress)
+          if (!pickupData) throw new Error("Could not find coordinates for pickup address.")
+          pLat = parseFloat(pickupData[0].lat)
+          pLon = parseFloat(pickupData[0].lon)
         }
 
-        const pLat = parseFloat(pickupData[0].lat)
-        const pLon = parseFloat(pickupData[0].lon)
-        const dLat = parseFloat(dropData[0].lat)
-        const dLon = parseFloat(dropData[0].lon)
+        // 2. Get Drop
+        let dLat = exactDrop?.lat
+        let dLon = exactDrop?.lng
+        if (!dLat || !dLon) {
+          const dropData = await geocodeAddress(dropAddress)
+          if (!dropData) throw new Error("Could not find coordinates for drop address.")
+          dLat = parseFloat(dropData[0].lat)
+          dLon = parseFloat(dropData[0].lon)
+        }
 
         if (!isMounted) return
 

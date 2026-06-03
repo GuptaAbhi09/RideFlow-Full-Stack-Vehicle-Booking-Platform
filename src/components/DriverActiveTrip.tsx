@@ -18,6 +18,10 @@ interface DriverActiveTripProps {
     pickup: string
     drop: string
     vehicleType: string
+    pickupLat?: number
+    pickupLng?: number
+    dropLat?: number
+    dropLng?: number
   }
 }
 
@@ -136,6 +140,8 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
           driverLocation={currentLocation}
+          exactPickup={booking.pickupLat && booking.pickupLng ? { lat: booking.pickupLat, lng: booking.pickupLng } : undefined}
+          exactDrop={booking.dropLat && booking.dropLng ? { lat: booking.dropLat, lng: booking.dropLng } : undefined}
           onRouteCalculated={(dist, dur) => {
             setDistance(dist)
             setDuration(dur)

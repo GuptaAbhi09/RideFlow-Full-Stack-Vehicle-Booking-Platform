@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { pickup, drop, mobileNumber, vehicleType } = body;
+    const { pickup, drop, mobileNumber, vehicleType, fare, distance, duration, pickupLat, pickupLng, dropLat, dropLng } = body;
 
     if (!pickup || !drop || !mobileNumber || !vehicleType) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -19,20 +19,11 @@ export async function POST(req: Request) {
 
     await connectDb();
 
-    // Geocode the pickup location to get precise Lat/Lng
-    let pickupLat = 0;
-    let pickupLng = 0;
-    try {
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pickup)}&limit=1`);
-      const geoData = await geoRes.json();
-      if (geoData && geoData.length > 0) {
-        pickupLat = parseFloat(geoData[0].lat);
-        pickupLng = parseFloat(geoData[0].lon);
-      }
-    } catch (err) {
-      console.error("Failed to geocode pickup location:", err);
-      // We will still create the booking, but without strict geospatial dispatch
-    }
+    // Coordinates are now provided by the estimate step
+    const pLat = pickupLat ? parseFloat(pickupLat) : undefined;
+    const pLng = pickupLng ? parseFloat(pickupLng) : undefined;
+    const dLat = dropLat ? parseFloat(dropLat) : undefined;
+    const dLng = dropLng ? parseFloat(dropLng) : undefined;
 
     // Safety check: Does the user already have an active booking?
     const existingBooking = await Booking.findOne({
@@ -51,11 +42,16 @@ export async function POST(req: Request) {
     const newBooking = await Booking.create({
       customerId: session.user.id, // Assuming session.user has id
       pickup,
-      pickupLat: pickupLat || undefined,
-      pickupLng: pickupLng || undefined,
+      pickupLat: pLat,
+      pickupLng: pLng,
       drop,
+      dropLat: dLat,
+      dropLng: dLng,
       mobileNumber,
       vehicleType,
+      fare,
+      distance,
+      duration,
       status: "searching"
     });
 

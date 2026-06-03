@@ -204,14 +204,22 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
 const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
   const [pickup, setPickup] = useState('')
   const [drop, setDrop] = useState('')
+  const [pickupExactCoords, setPickupExactCoords] = useState<{lat: number, lng: number} | null>(null)
+  const [dropExactCoords, setDropExactCoords] = useState<{lat: number, lng: number} | null>(null)
   const [mobile, setMobile] = useState('')
   const [vehicle, setVehicle] = useState('Car')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [estimateData, setEstimateData] = useState<any>(null)
   const [mapPickerTarget, setMapPickerTarget] = useState<'pickup' | 'drop' | null>(null)
   const router = useRouter()
   const { data: session } = useSession()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Reset estimate if user changes inputs
+  useEffect(() => {
+    if (estimateData) setEstimateData(null)
+  }, [pickup, drop, vehicle])
+
+  const handleGetEstimate = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!pickup || !drop || !mobile || !vehicle) {
@@ -225,12 +233,62 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
     }
 
     setIsSubmitting(true)
+    try {
+      const res = await fetch('/api/bookings/estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          pickup, 
+          drop, 
+          vehicleType: vehicle,
+          pickupLat: pickupExactCoords?.lat,
+          pickupLng: pickupExactCoords?.lng,
+          dropLat: dropExactCoords?.lat,
+          dropLng: dropExactCoords?.lng
+        })
+      })
+      const data = await res.json()
+      
+      if (!res.ok) {
+        if (res.status === 401) {
+          toast.error("Please login first.")
+          if (onRequireLogin) onRequireLogin()
+          else onClose()
+        } else {
+          toast.error(data.error || "Failed to get estimate")
+        }
+        setIsSubmitting(false)
+        return
+      }
+
+      setEstimateData(data)
+    } catch (error) {
+      toast.error('Network error while getting estimate.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleConfirmBooking = async () => {
+    setIsSubmitting(true)
 
     try {
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pickup, drop, mobileNumber: mobile, vehicleType: vehicle })
+        body: JSON.stringify({ 
+          pickup, 
+          drop, 
+          mobileNumber: mobile, 
+          vehicleType: vehicle,
+          fare: estimateData.fare,
+          distance: estimateData.distanceKm + ' km',
+          duration: estimateData.durationMins + ' mins',
+          pickupLat: estimateData.pickupLat,
+          pickupLng: estimateData.pickupLng,
+          dropLat: estimateData.dropLat,
+          dropLng: estimateData.dropLng
+        })
       })
 
       const data = await res.json()
@@ -270,11 +328,12 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
         socket.emit('request_ride', {
           rideId: data.bookingId,
           pickup: pickup,
-          pickupLat: data.pickupLat,
-          pickupLng: data.pickupLng,
+          pickupLat: estimateData.pickupLat,
+          pickupLng: estimateData.pickupLng,
           drop: drop,
           vehicleType: data.vehicleType,
-          fare: "TBD", // You could calculate this beforehand
+          fare: `₹${estimateData.fare}`,
+          distanceToDrop: `${estimateData.distanceKm} km`,
           customerName: session.user.name
         });
       }
@@ -321,7 +380,7 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                 <p className="text-gray-400 text-sm">Enter your details below and we'll get you moving instantly.</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={!estimateData ? handleGetEstimate : (e) => { e.preventDefault(); handleConfirmBooking(); }} className="space-y-5">
                 <div className="space-y-4">
                   
                   {/* Enhanced Pickup Location */}
@@ -330,7 +389,10 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                     icon={<MapPin size={18} />}
                     placeholder="Search pickup or use current..."
                     value={pickup}
-                    onChange={setPickup}
+                    onChange={(val) => {
+                      setPickup(val)
+                      setPickupExactCoords(null)
+                    }}
                     showCurrentLocation={true}
                     inputColor="blue"
                     onMapClick={() => setMapPickerTarget('pickup')}
@@ -342,7 +404,10 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                     icon={<Navigation size={18} />}
                     placeholder="Search destination..."
                     value={drop}
-                    onChange={setDrop}
+                    onChange={(val) => {
+                      setDrop(val)
+                      setDropExactCoords(null)
+                    }}
                     inputColor="red"
                     onMapClick={() => setMapPickerTarget('drop')}
                   />
@@ -395,18 +460,39 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                     </div>
                   </div>
 
+                  {/* Step 2: Fare Estimate Display */}
+                  <AnimatePresence>
+                    {estimateData && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 overflow-hidden"
+                      >
+                        <div className="flex justify-between items-center mb-2">
+                          <p className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Estimated Fare</p>
+                          <p className="text-2xl font-extrabold text-white">₹{estimateData.fare}</p>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 font-medium">
+                          <span>Distance: {estimateData.distanceKm} km</span>
+                          <span>Est. Time: {estimateData.durationMins} mins</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full mt-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+                  className={`w-full mt-6 py-4 ${estimateData ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/20'} text-white rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2`}
                 >
                   {isSubmitting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      Confirm Booking Request
+                      {estimateData ? 'Confirm Booking Request' : 'Get Fare Estimate'}
                       <ChevronRight size={18} />
                     </>
                   )}
@@ -421,9 +507,15 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
     {mapPickerTarget && (
       <MapPicker 
         onClose={() => setMapPickerTarget(null)}
-        onSelect={(address) => {
-          if (mapPickerTarget === 'pickup') setPickup(address)
-          if (mapPickerTarget === 'drop') setDrop(address)
+        onSelect={(address, lat, lng) => {
+          if (mapPickerTarget === 'pickup') {
+            setPickup(address)
+            if (lat && lng) setPickupExactCoords({lat, lng})
+          }
+          if (mapPickerTarget === 'drop') {
+            setDrop(address)
+            if (lat && lng) setDropExactCoords({lat, lng})
+          }
         }}
       />
     )}

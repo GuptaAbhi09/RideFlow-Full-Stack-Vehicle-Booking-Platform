@@ -23,7 +23,13 @@ export default async function TrackingPage(props: { params: Promise<{ id: string
     status: booking.status,
     pickup: booking.pickup,
     drop: booking.drop,
-    vehicleType: booking.vehicleType
+    vehicleType: booking.vehicleType,
+    fare: booking.fare,
+    distance: booking.distance,
+    pickupLat: booking.pickupLat,
+    pickupLng: booking.pickupLng,
+    dropLat: booking.dropLat,
+    dropLng: booking.dropLng
   }
 
   return (
