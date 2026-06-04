@@ -38,6 +38,9 @@ export async function POST(req: Request) {
       }, { status: 409 });
     }
 
+    // Generate a random 4-digit OTP (1000 - 9999)
+    const startOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
     // Create a new booking with initial state 'searching'
     const newBooking = await Booking.create({
       customerId: session.user.id, // Assuming session.user has id
@@ -52,6 +55,7 @@ export async function POST(req: Request) {
       fare,
       distance,
       duration,
+      startOtp,
       status: "searching"
     });
 

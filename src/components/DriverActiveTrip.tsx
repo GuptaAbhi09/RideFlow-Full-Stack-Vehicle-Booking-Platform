@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { MapPin, Navigation, Compass, CheckCircle, XCircle } from 'lucide-react'
+import { MapPin, Navigation, Compass, CheckCircle, XCircle, ChevronRight, KeyRound } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { getSocket } from '@/lib/socket'
 import { useSession } from 'next-auth/react'
@@ -30,8 +31,13 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
   const [heading, setHeading] = useState<number | null>(null)
   const [distance, setDistance] = useState<string | null>(null)
   const [duration, setDuration] = useState<string | null>(null)
-  const [isCompleting, setIsCompleting] = useState(false)
+  const [currentStatus, setCurrentStatus] = useState(booking.status)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
+  
+  // OTP Modal State
+  const [showOtpModal, setShowOtpModal] = useState(false)
+  const [otp, setOtp] = useState("")
   
   const { data: session } = useSession()
   const router = useRouter()
@@ -94,17 +100,62 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
     }
   }, [session, booking.id, router])
 
-  const handleCompleteTrip = async () => {
-    setIsCompleting(true)
+  const updateStatus = async (newStatus: string) => {
+    setIsProcessing(true)
     try {
-      // In a real app, this would be a PUT request to /api/bookings/[id]/complete
-      toast.success("Trip Completed Successfully!")
-      setTimeout(() => {
-        router.push('/partner/dashboard')
-      }, 1500)
-    } catch (error) {
-      toast.error("Failed to complete trip")
-      setIsCompleting(false)
+      const res = await fetch(`/api/bookings/${booking.id}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setCurrentStatus(newStatus)
+        const socket = getSocket()
+        socket.emit('ride_status_updated', { rideId: booking.id, status: newStatus })
+        
+        if (newStatus === 'arriving') {
+          toast.success("Marked as arrived!")
+        } else if (newStatus === 'completed') {
+          toast.success("Trip Completed Successfully!")
+          setTimeout(() => router.push('/partner/dashboard'), 1500)
+        }
+      } else {
+        toast.error(data.error || "Failed to update status")
+      }
+    } catch (err) {
+      toast.error("Network error")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleStartTrip = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (otp.length !== 4) return toast.error("Please enter a 4-digit PIN")
+
+    setIsProcessing(true)
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ otp })
+      })
+      const data = await res.json()
+      
+      if (res.ok) {
+        toast.success("Journey Started!")
+        setCurrentStatus('started')
+        setShowOtpModal(false)
+        const socket = getSocket()
+        socket.emit('ride_status_updated', { rideId: booking.id, status: 'started' })
+      } else {
+        toast.error(data.error || "Invalid PIN")
+      }
+    } catch (err) {
+      toast.error("Network error")
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -217,24 +268,55 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
 
         {/* Action Buttons */}
         <div className="mt-auto flex flex-col gap-3">
-          <button
-            onClick={handleCompleteTrip}
-            disabled={isCompleting || isCancelling}
-            className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
-          >
-            {isCompleting ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <CheckCircle size={20} />
-                Complete Trip & Collect Payment
-              </>
-            )}
-          </button>
+          
+          {currentStatus === 'accepted' && (
+            <button
+              onClick={() => updateStatus('arriving')}
+              disabled={isProcessing}
+              className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+            >
+              {isProcessing ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Navigation size={20} />
+                  Mark as Arrived
+                </>
+              )}
+            </button>
+          )}
+
+          {currentStatus === 'arriving' && (
+            <button
+              onClick={() => setShowOtpModal(true)}
+              disabled={isProcessing}
+              className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+            >
+              <KeyRound size={20} />
+              Enter PIN to Start Journey
+            </button>
+          )}
+
+          {currentStatus === 'started' && (
+            <button
+              onClick={() => updateStatus('completed')}
+              disabled={isProcessing}
+              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
+            >
+              {isProcessing ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <CheckCircle size={20} />
+                  Complete Trip
+                </>
+              )}
+            </button>
+          )}
 
           <button
             onClick={handleCancelTrip}
-            disabled={isCompleting || isCancelling}
+            disabled={isProcessing || isCancelling}
             className="w-full py-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
           >
             {isCancelling ? (
@@ -249,6 +331,58 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         </div>
 
       </div>
+
+      {/* OTP Modal */}
+      <AnimatePresence>
+        {showOtpModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowOtpModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#121212] border border-white/10 w-full max-w-sm rounded-3xl p-8 relative z-10 shadow-2xl"
+            >
+              <div className="flex justify-center mb-4 text-yellow-500">
+                <KeyRound size={48} />
+              </div>
+              <h2 className="text-2xl font-bold text-center text-white mb-2">Enter Ride PIN</h2>
+              <p className="text-gray-400 text-center text-sm mb-6">Ask the customer for their 4-digit PIN to start the journey.</p>
+              
+              <form onSubmit={handleStartTrip}>
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="0000"
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl py-4 text-center text-3xl font-mono text-white tracking-[1em] focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all mb-6"
+                  required
+                />
+                
+                <button
+                  type="submit"
+                  disabled={isProcessing || otp.length !== 4}
+                  className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    "Verify & Start"
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   )
 }

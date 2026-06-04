@@ -24,6 +24,7 @@ interface TrackingDashboardProps {
     pickupLng?: number
     dropLat?: number
     dropLng?: number
+    startOtp?: string
   }
 }
 
@@ -114,11 +115,27 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         setNotifiedCount(data.count)
       }
 
+      // Handle generic status updates (arriving, started, completed)
+      const handleRideStatusUpdated = (data: any) => {
+        if (data.rideId === booking.id) {
+          setCurrentStatus(data.status)
+          if (data.status === 'arriving') {
+            toast.success("Driver has arrived at the pickup location!")
+          } else if (data.status === 'started') {
+            toast.success("Journey started! Have a safe ride.")
+          } else if (data.status === 'completed') {
+            toast.success("Trip completed! Redirecting...")
+            setTimeout(() => router.push('/'), 2000)
+          }
+        }
+      }
+
       socket.on('ride_accepted', handleRideAccepted)
       socket.on('driver_location_updated', handleLocationUpdate)
       socket.on('ride_cancelled', handleRideCancelled)
       socket.on('no_drivers_found', handleNoDriversFound)
       socket.on('drivers_notified', handleDriversNotified)
+      socket.on('ride_status_updated', handleRideStatusUpdated)
 
       return () => {
         socket.off('connect', registerAndJoin)
@@ -127,6 +144,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         socket.off('ride_cancelled', handleRideCancelled)
         socket.off('no_drivers_found', handleNoDriversFound)
         socket.off('drivers_notified', handleDriversNotified)
+        socket.off('ride_status_updated', handleRideStatusUpdated)
       }
     }
   }, [session, booking.id, booking.status, currentStatus, router])
@@ -222,16 +240,32 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
                 <Users size={14} className="text-emerald-400" />
               </div>
               <div className="flex items-baseline gap-1 text-white">
-                <span className="font-extrabold text-xl">
-                  Assigned
+                <span className="font-extrabold text-xl capitalize">
+                  {currentStatus}
                 </span>
               </div>
               <span className="text-gray-400 text-xs font-medium">
-                Driver is on the way
+                {currentStatus === 'accepted' && "Driver is on the way"}
+                {currentStatus === 'arriving' && "Driver is outside"}
+                {currentStatus === 'started' && "Heading to destination"}
+                {currentStatus === 'completed' && "Trip finished"}
               </span>
             </div>
           )}
         </div>
+
+        {/* OTP Card */}
+        {booking.startOtp && (currentStatus === 'accepted' || currentStatus === 'arriving') && (
+          <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-5 shadow-xl flex items-center justify-between">
+            <div>
+              <p className="text-yellow-500 text-[10px] font-bold uppercase tracking-wider mb-1">Ride PIN</p>
+              <p className="text-sm text-gray-300">Give this PIN to your driver</p>
+            </div>
+            <div className="bg-yellow-500/20 border border-yellow-500/30 px-6 py-2 rounded-xl">
+              <span className="text-2xl font-extrabold text-yellow-400 tracking-widest">{booking.startOtp}</span>
+            </div>
+          </div>
+        )}
 
         {/* Details */}
         <div className="bg-[#121212] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4 mb-8">

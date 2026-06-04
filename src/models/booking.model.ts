@@ -13,6 +13,7 @@ export interface IBooking extends Document {
   dropLat?: number
   dropLng?: number
   mobileNumber: string
+  startOtp?: string
   vehicleType: typeof vehicleTypeEnum[number]
   status: typeof bookingStatusEnum[number]
   fare?: number
@@ -55,6 +56,9 @@ const bookingSchema = new Schema<IBooking>({
   mobileNumber: {
     type: String,
     required: true
+  },
+  startOtp: {
+    type: String
   },
   vehicleType: {
     type: String,
