@@ -19,6 +19,8 @@ export interface IBooking extends Document {
   fare?: number
   distance?: string
   duration?: string
+  paymentStatus?: 'pending' | 'completed'
+  paymentId?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -77,6 +79,14 @@ const bookingSchema = new Schema<IBooking>({
     type: String
   },
   duration: {
+    type: String
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'completed'],
+    default: 'pending'
+  },
+  paymentId: {
     type: String
   }
 }, {

@@ -89,11 +89,21 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         }
       }
 
+      // Listen for successful payment
+      const handlePaymentSuccessful = (data: any) => {
+        if (data.rideId === booking.id) {
+          toast.success("Payment Received Successfully!")
+          setTimeout(() => router.push('/partner/dashboard'), 1500)
+        }
+      }
+
       socket.on('ride_cancelled', handleRideCancelled)
+      socket.on('payment_successful', handlePaymentSuccessful)
 
       return () => {
         navigator.geolocation.clearWatch(watchId);
         socket.off('ride_cancelled', handleRideCancelled)
+        socket.off('payment_successful', handlePaymentSuccessful)
       };
     } else {
       toast.error("Geolocation is not supported by your browser");
@@ -117,8 +127,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         if (newStatus === 'arriving') {
           toast.success("Marked as arrived!")
         } else if (newStatus === 'completed') {
-          toast.success("Trip Completed Successfully!")
-          setTimeout(() => router.push('/partner/dashboard'), 1500)
+          toast.success("Trip completed. Waiting for customer payment...")
         }
       } else {
         toast.error(data.error || "Failed to update status")
@@ -269,65 +278,77 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         {/* Action Buttons */}
         <div className="mt-auto flex flex-col gap-3">
           
-          {currentStatus === 'accepted' && (
-            <button
-              onClick={() => updateStatus('arriving')}
-              disabled={isProcessing}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
-            >
-              {isProcessing ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Navigation size={20} />
-                  Mark as Arrived
-                </>
+          {currentStatus === 'completed' ? (
+            <div className="w-full py-8 bg-emerald-600/10 border border-emerald-500/20 rounded-xl flex flex-col items-center justify-center gap-4">
+              <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+              <div className="text-center">
+                <p className="text-emerald-500 font-bold">Waiting for Payment</p>
+                <p className="text-xs text-emerald-500/60 mt-1">Customer is paying on their device...</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {currentStatus === 'accepted' && (
+                <button
+                  onClick={() => updateStatus('arriving')}
+                  disabled={isProcessing}
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Navigation size={20} />
+                      Mark as Arrived
+                    </>
+                  )}
+                </button>
               )}
-            </button>
-          )}
 
-          {currentStatus === 'arriving' && (
-            <button
-              onClick={() => setShowOtpModal(true)}
-              disabled={isProcessing}
-              className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
-            >
-              <KeyRound size={20} />
-              Enter PIN to Start Journey
-            </button>
-          )}
-
-          {currentStatus === 'started' && (
-            <button
-              onClick={() => updateStatus('completed')}
-              disabled={isProcessing}
-              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
-            >
-              {isProcessing ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <CheckCircle size={20} />
-                  Complete Trip
-                </>
+              {currentStatus === 'arriving' && (
+                <button
+                  onClick={() => setShowOtpModal(true)}
+                  disabled={isProcessing}
+                  className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+                >
+                  <KeyRound size={20} />
+                  Enter PIN to Start Journey
+                </button>
               )}
-            </button>
-          )}
 
-          <button
-            onClick={handleCancelTrip}
-            disabled={isProcessing || isCancelling}
-            className="w-full py-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-          >
-            {isCancelling ? (
-              <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
-            ) : (
-              <>
-                <XCircle size={18} />
-                Cancel Trip
-              </>
-            )}
-          </button>
+              {currentStatus === 'started' && (
+                <button
+                  onClick={() => updateStatus('completed')}
+                  disabled={isProcessing}
+                  className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      Complete Trip
+                    </>
+                  )}
+                </button>
+              )}
+
+              <button
+                onClick={handleCancelTrip}
+                disabled={isProcessing || isCancelling}
+                className="w-full py-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              >
+                {isCancelling ? (
+                  <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <XCircle size={18} />
+                    Cancel Trip
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
 
       </div>
