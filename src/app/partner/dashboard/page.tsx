@@ -115,7 +115,7 @@ export default function PartnerDashboard() {
   }
 
   return (
-    <div className="pb-12 px-6">
+    <div className="pt-24 pb-12 px-6 min-h-screen bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
@@ -123,13 +123,22 @@ export default function PartnerDashboard() {
             <h1 className="text-4xl font-extrabold tracking-tight">Partner Dashboard</h1>
           </div>
           {partnerStatus === 'approved' && (
-            <button 
-              onClick={() => router.push('/rides')}
-              className="px-6 py-3 bg-[#121212] hover:bg-[#1a1a1a] text-white border border-white/10 rounded-xl font-bold transition-all flex items-center gap-2"
-            >
-              <FileText size={18} />
-              My Rides & Invoices
-            </button>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => router.push('/partner/dashboard/earnings')}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20"
+              >
+                <DollarSign size={18} />
+                Earnings & Payouts
+              </button>
+              <button 
+                onClick={() => router.push('/rides')}
+                className="px-6 py-3 bg-[#121212] hover:bg-[#1a1a1a] text-white border border-white/10 rounded-xl font-bold transition-all flex items-center gap-2 hidden md:flex"
+              >
+                <FileText size={18} />
+                Ride History
+              </button>
+            </div>
           )}
         </div>
 

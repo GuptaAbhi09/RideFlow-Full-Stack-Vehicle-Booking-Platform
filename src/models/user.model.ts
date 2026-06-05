@@ -18,6 +18,7 @@ interface IUser extends Document {
     videoKycRejectionReason?: string;
     averageRating: number;
     totalRatings: number;
+    withdrawnAmount: number;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -80,6 +81,10 @@ const userSchema = new mongoose.Schema<IUser>({
         default: 5.0
     },
     totalRatings: {
+        type: Number,
+        default: 0
+    },
+    withdrawnAmount: {
         type: Number,
         default: 0
     }
