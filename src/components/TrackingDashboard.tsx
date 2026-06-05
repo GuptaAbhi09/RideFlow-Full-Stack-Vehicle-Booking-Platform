@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { MapPin, Navigation, Car, Users, XCircle, CreditCard, CheckCircle } from 'lucide-react'
+import { MapPin, Navigation, Car, Users, XCircle, CreditCard, CheckCircle, Star } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { getSocket } from '@/lib/socket'
 import { useSession } from 'next-auth/react'
@@ -47,6 +47,10 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
   const [driverLocation, setDriverLocation] = useState<{ lat: number, lng: number } | null>(null)
   const [isCancelling, setIsCancelling] = useState(false)
   const [isPaying, setIsPaying] = useState(false)
+  const [isRatingMode, setIsRatingMode] = useState(false)
+  const [rating, setRating] = useState(5)
+  const [review, setReview] = useState("")
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false)
   const [notifiedCount, setNotifiedCount] = useState<number | string>('Scanning...')
   const { data: session } = useSession()
   const router = useRouter()
@@ -184,6 +188,27 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
     }
   }
 
+  const submitRating = async () => {
+    setIsSubmittingRating(true)
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}/rate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, review }),
+      });
+      if (res.ok) {
+        toast.success("Thank you for your feedback!");
+        setTimeout(() => router.push("/"), 1500);
+      } else {
+        toast.error("Failed to submit rating.");
+        setIsSubmittingRating(false);
+      }
+    } catch (e) {
+      toast.error("Network error");
+      setIsSubmittingRating(false);
+    }
+  }
+
   const handlePayment = async () => {
     setIsPaying(true);
     try {
@@ -232,12 +257,13 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             
             const verifyData = await verifyRes.json();
             if (verifyRes.ok) {
-              toast.success("Payment Successful! Thank you.");
+              toast.success("Payment Successful! Please rate your driver.");
               // Notify driver via socket
               const socket = getSocket();
               socket.emit("payment_successful", { rideId: booking.id });
-              // Redirect home
-              setTimeout(() => router.push("/"), 2000);
+              
+              // Enter Rating Mode
+              setIsRatingMode(true);
             } else {
               toast.error(verifyData.error || "Payment verification failed");
               setIsPaying(false);
@@ -319,8 +345,56 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
           </div>
         </div>
 
-        {/* Conditional Rendering based on Trip Completion */}
-        {currentStatus === 'completed' ? (
+        {/* Conditional Rendering based on Trip Completion / Rating */}
+        {isRatingMode ? (
+          <div className="flex-1 flex flex-col justify-center items-center p-8 bg-gradient-to-br from-yellow-900/10 to-transparent border border-yellow-500/20 rounded-3xl">
+            <div className="w-20 h-20 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(234,179,8,0.3)]">
+              <Star size={40} className="fill-yellow-400" />
+            </div>
+            <h2 className="text-3xl font-extrabold text-white mb-2">Rate Your Driver</h2>
+            <p className="text-gray-400 text-center mb-8">How was your trip with {driverInfo?.name || "your driver"}?</p>
+            
+            <div className="flex gap-2 mb-8">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="focus:outline-none transition-transform hover:scale-110"
+                >
+                  <Star 
+                    size={48} 
+                    className={`${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'} transition-colors`} 
+                  />
+                </button>
+              ))}
+            </div>
+
+            <textarea
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+              placeholder="Leave a comment (optional)..."
+              className="w-full bg-[#121212] border border-white/10 rounded-xl p-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all mb-8 resize-none h-32"
+            />
+
+            <button
+              onClick={submitRating}
+              disabled={isSubmittingRating}
+              className="w-full py-4 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-yellow-600/20 disabled:opacity-50"
+            >
+              {isSubmittingRating ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Submit Rating"
+              )}
+            </button>
+            <button 
+              onClick={() => router.push('/')}
+              className="mt-4 text-gray-500 text-sm hover:text-white transition-colors"
+            >
+              Skip
+            </button>
+          </div>
+        ) : currentStatus === 'completed' ? (
           <div className="flex-1 flex flex-col justify-center items-center p-8 bg-gradient-to-br from-emerald-900/10 to-transparent border border-emerald-500/20 rounded-3xl">
             <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(16,185,129,0.3)]">
               <CheckCircle size={40} />

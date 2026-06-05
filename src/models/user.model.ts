@@ -16,6 +16,8 @@ interface IUser extends Document {
     videoKycStatus: "not_required" | "pending" | "in_progress" | "approved" | "rejected";
     videoKycRoomId?: string;
     videoKycRejectionReason?: string;
+    averageRating: number;
+    totalRatings: number;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -72,6 +74,14 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     videoKycRejectionReason: {
         type: String
+    },
+    averageRating: {
+        type: Number,
+        default: 5.0
+    },
+    totalRatings: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true })
 

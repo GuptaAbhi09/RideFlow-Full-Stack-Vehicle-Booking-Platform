@@ -21,6 +21,8 @@ export interface IBooking extends Document {
   duration?: string
   paymentStatus?: 'pending' | 'completed'
   paymentId?: string
+  rating?: number
+  review?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -87,6 +89,14 @@ const bookingSchema = new Schema<IBooking>({
     default: 'pending'
   },
   paymentId: {
+    type: String
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5
+  },
+  review: {
     type: String
   }
 }, {
