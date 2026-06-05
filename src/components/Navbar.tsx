@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
 import { signOut, useSession } from 'next-auth/react'
-import { Menu, X, User as UserIcon, LogOut, Briefcase } from 'lucide-react'
+import { Menu, X, User as UserIcon, LogOut, Briefcase, Car } from 'lucide-react'
 
 const Navbar = ({ onLogin }: { onLogin?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -113,6 +113,15 @@ const Navbar = ({ onLogin }: { onLogin?: () => void }) => {
                           </span>
                         </Link>
                         
+                        <Link 
+                          href="/rides"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer"
+                        >
+                          <Car size={18} className="text-emerald-500" />
+                          <span className="font-medium">My Rides</span>
+                        </Link>
+                        
                         <button 
                           onClick={() => signOut()}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
@@ -190,6 +199,15 @@ const Navbar = ({ onLogin }: { onLogin?: () => void }) => {
                     <span className="text-sm font-bold">
                       {currentUser.role === 'partner' ? 'Partner Dashboard' : 'Become a Partner'}
                     </span>
+                  </Link>
+
+                  <Link 
+                    href="/rides"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 text-emerald-400 w-full"
+                  >
+                    <Car size={20} />
+                    <span className="text-sm font-bold">My Rides</span>
                   </Link>
                   <button 
                     onClick={() => signOut()}

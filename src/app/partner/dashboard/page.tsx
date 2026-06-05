@@ -122,6 +122,15 @@ export default function PartnerDashboard() {
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">Partner Dashboard</h1>
           </div>
+          {partnerStatus === 'approved' && (
+            <button 
+              onClick={() => router.push('/rides')}
+              className="px-6 py-3 bg-[#121212] hover:bg-[#1a1a1a] text-white border border-white/10 rounded-xl font-bold transition-all flex items-center gap-2"
+            >
+              <FileText size={18} />
+              My Rides & Invoices
+            </button>
+          )}
         </div>
 
         {/* Vehicle Rejection Banner */}
