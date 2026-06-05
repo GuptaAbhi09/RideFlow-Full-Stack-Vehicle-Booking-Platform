@@ -4,7 +4,7 @@ import Booking from "@/models/booking.model";
 import User from "@/models/user.model";
 import { auth } from "@/auth";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session || !session.user) {
@@ -18,7 +18,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     await connectDb();
 
-    const booking = await Booking.findById(params.id);
+    const { id } = await props.params;
+    const booking = await Booking.findById(id);
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }

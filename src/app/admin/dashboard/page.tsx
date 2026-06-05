@@ -25,6 +25,7 @@ interface Stats {
   approved: number
   pending: number
   rejected: number
+  platformRevenue: number
 }
 
 interface PendingUser {
@@ -87,10 +88,10 @@ const AdminDashboard = () => {
   }
 
   const statCards = [
+    { label: 'Platform Profit', value: `₹${stats?.platformRevenue.toFixed(2) || 0}`, icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { label: 'Total Partners', value: stats?.total || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { label: 'Approved', value: stats?.approved || 0, icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-500/10' },
     { label: 'Pending', value: stats?.pending || 0, icon: Clock, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
-    { label: 'Rejected', value: stats?.rejected || 0, icon: XCircle, color: 'text-red-500', bg: 'bg-red-500/10' },
   ]
 
   const tabs = [

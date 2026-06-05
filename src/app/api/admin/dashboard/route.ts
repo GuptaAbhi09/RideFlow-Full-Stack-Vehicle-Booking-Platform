@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import dbConnect from "@/lib/db"
 import User from "@/models/user.model"
 import Vehicle from "@/models/vehicle.model"
+import Booking from "@/models/booking.model"
 
 export async function GET() {
   try {
@@ -19,6 +20,14 @@ export async function GET() {
     const approvedPartners = await User.countDocuments({ role: "partner", partnerStatus: "approved" })
     const pendingPartners = await User.countDocuments({ role: "partner", partnerStatus: "pending" })
     const rejectedPartners = await User.countDocuments({ role: "partner", partnerStatus: "rejected" })
+
+    // Calculate Platform Revenue (10% of all completed rides)
+    const completedBookings = await Booking.find({ status: 'completed' });
+    let totalGrossRevenue = 0;
+    completedBookings.forEach(booking => {
+        totalGrossRevenue += (booking.fare || 0);
+    });
+    const platformRevenue = totalGrossRevenue * 0.10;
 
     // 2. Pending Partner Reviews (Initial docs/bank review - Step 3)
     const pendingReviews = await User.find({ 
@@ -43,7 +52,8 @@ export async function GET() {
         total: totalPartners,
         approved: approvedPartners,
         pending: pendingPartners,
-        rejected: rejectedPartners
+        rejected: rejectedPartners,
+        platformRevenue: platformRevenue
       },
       pendingReviews,
       pendingKyc,

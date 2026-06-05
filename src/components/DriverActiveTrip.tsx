@@ -53,6 +53,9 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
       role: 'partner'
     })
 
+    // Explicitly join the ride room in case of page refresh
+    socket.emit('join_ride', { rideId: booking.id })
+
     // Start watching GPS location
     if ('geolocation' in navigator) {
       const watchId = navigator.geolocation.watchPosition(
