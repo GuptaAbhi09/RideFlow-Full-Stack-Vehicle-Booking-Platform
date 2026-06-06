@@ -23,6 +23,11 @@ export interface IBooking extends Document {
   paymentId?: string
   rating?: number
   review?: string
+  chatMessages: {
+    sender: 'customer' | 'partner'
+    text: string
+    timestamp: Date
+  }[]
   createdAt: Date
   updatedAt: Date
 }
@@ -98,7 +103,12 @@ const bookingSchema = new Schema<IBooking>({
   },
   review: {
     type: String
-  }
+  },
+  chatMessages: [{
+    sender: { type: String, enum: ['customer', 'partner'], required: true },
+    text: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now }
+  }]
 }, {
   timestamps: true
 })

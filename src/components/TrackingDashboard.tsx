@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { MapPin, Navigation, Car, Users, XCircle, CreditCard, CheckCircle, Star } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { getSocket } from '@/lib/socket'
+import RideChat from './RideChat'
 import { useSession } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -537,6 +538,10 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
         )}
       </div>
 
+      {/* Ride Chat Component */}
+      {(currentStatus === 'accepted' || currentStatus === 'arriving' || currentStatus === 'started') && (
+        <RideChat bookingId={booking.id} role="customer" />
+      )}
     </div>
   )
 }

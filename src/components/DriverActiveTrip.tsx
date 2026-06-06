@@ -5,6 +5,7 @@ import { MapPin, Navigation, Compass, CheckCircle, XCircle, ChevronRight, KeyRou
 import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { getSocket } from '@/lib/socket'
+import RideChat from './RideChat'
 import { useSession } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -407,6 +408,10 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         )}
       </AnimatePresence>
 
+      {/* Ride Chat Component */}
+      {(currentStatus === 'accepted' || currentStatus === 'arriving' || currentStatus === 'started') && (
+        <RideChat bookingId={booking.id} role="partner" />
+      )}
     </div>
   )
 }
