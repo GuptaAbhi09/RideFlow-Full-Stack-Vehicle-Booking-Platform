@@ -79,28 +79,28 @@ const AdminBookingsPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-3xl font-semibold text-[#f5f5f5] flex items-center gap-3">
             <MapPin className="text-blue-500" />
             Live Platform Bookings
           </h1>
-          <p className="text-gray-400 text-sm mt-1">Monitor all active and past rides across the city.</p>
+          <p className="text-[#9ca3af] text-sm mt-1">Monitor all active and past rides across the city.</p>
         </div>
         
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9ca3af]" size={18} />
             <input 
               type="text" 
               placeholder="Search ID, name, or location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-12 pr-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all"
+              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg py-2.5 pl-12 pr-4 text-[#f5f5f5] text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-[#9ca3af]"
             />
           </div>
           <select 
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 text-white text-sm focus:outline-none"
+            className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg py-2.5 px-4 text-[#f5f5f5] text-sm focus:outline-none"
           >
             <option value="all">All Status</option>
             <option value="searching">Searching</option>
@@ -114,7 +114,7 @@ const AdminBookingsPage = () => {
 
       {/* Bookings List */}
       <div className="space-y-4">
-        <div className="hidden md:grid grid-cols-12 px-6 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/5">
+        <div className="hidden md:grid grid-cols-12 px-6 py-3 text-xs font-medium text-[#9ca3af] border-b border-[#2a2a2a]">
           <div className="col-span-3">Ride ID & Time</div>
           <div className="col-span-4">Route Details</div>
           <div className="col-span-3">Customer & Driver</div>
@@ -122,17 +122,17 @@ const AdminBookingsPage = () => {
         </div>
 
         {filteredBookings.length > 0 ? filteredBookings.map((booking, idx) => (
-          <motion.div
+            <motion.div
             key={booking._id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 items-center px-6 py-5 bg-[#121212] border border-white/5 rounded-2xl hover:bg-white/[0.02] hover:border-white/10 transition-all group"
+            className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 items-center px-6 py-5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl hover:border-[#3a3a3a] transition-colors group"
           >
             {/* ID & Time */}
             <div className="md:col-span-3">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono text-gray-400">#{booking._id.slice(-8).toUpperCase()}</span>
+                <span className="text-xs font-mono text-[#9ca3af]">#{booking._id.slice(-8).toUpperCase()}</span>
                 {booking.status === 'started' && (
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -140,56 +140,56 @@ const AdminBookingsPage = () => {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-300 font-medium">
+              <p className="text-sm text-[#f5f5f5] font-medium">
                 {new Date(booking.createdAt).toLocaleDateString()} at {new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
 
             {/* Route */}
             <div className="md:col-span-4 flex flex-col gap-2 relative pl-2 md:pl-0">
-              <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-white/5 z-0 md:hidden"></div>
+              <div className="absolute left-3 top-2 bottom-2 w-[1px] bg-[#2a2a2a] z-0 md:hidden"></div>
               
               <div className="flex items-start gap-3 relative z-10">
-                <div className="p-1 bg-[#0a0a0a] rounded-full mt-0.5">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="p-1 bg-[#0f0f0f] rounded-full mt-0.5">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                 </div>
-                <p className="text-xs text-gray-300 line-clamp-1">{booking.pickup}</p>
+                <p className="text-xs text-[#f5f5f5] line-clamp-1">{booking.pickup}</p>
               </div>
               
               <div className="flex items-start gap-3 relative z-10">
-                <div className="p-1 bg-[#0a0a0a] rounded-full mt-0.5">
-                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <div className="p-1 bg-[#0f0f0f] rounded-full mt-0.5">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                 </div>
-                <p className="text-xs text-gray-300 line-clamp-1">{booking.drop}</p>
+                <p className="text-xs text-[#f5f5f5] line-clamp-1">{booking.drop}</p>
               </div>
             </div>
 
             {/* Users */}
             <div className="md:col-span-3 space-y-2">
-              <div className="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-                <span className="text-[10px] text-gray-500 uppercase font-bold">Cust</span>
-                <span className="text-xs text-gray-200 font-medium">{booking.customerId?.name || 'Unknown'}</span>
+              <div className="flex justify-between items-center bg-[#0f0f0f] px-3 py-1.5 rounded-lg border border-[#2a2a2a]">
+                <span className="text-[10px] text-[#9ca3af] uppercase font-bold">Cust</span>
+                <span className="text-xs text-[#f5f5f5] font-medium">{booking.customerId?.name || 'Unknown'}</span>
               </div>
-              <div className="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-                <span className="text-[10px] text-gray-500 uppercase font-bold">Driver</span>
-                <span className="text-xs text-gray-200 font-medium">{booking.driverId?.name || 'Searching...'}</span>
+              <div className="flex justify-between items-center bg-[#0f0f0f] px-3 py-1.5 rounded-lg border border-[#2a2a2a]">
+                <span className="text-[10px] text-[#9ca3af] uppercase font-bold">Driver</span>
+                <span className="text-xs text-[#f5f5f5] font-medium">{booking.driverId?.name || 'Searching...'}</span>
               </div>
             </div>
 
             {/* Fare & Status */}
             <div className="md:col-span-2 flex flex-row md:flex-col items-center justify-between md:items-end gap-2">
-              <h3 className="text-lg font-extrabold text-white">₹{booking.fare?.toFixed(2)}</h3>
+              <h3 className="text-lg font-semibold text-[#f5f5f5]">₹{booking.fare?.toFixed(2)}</h3>
               
-              <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 ${
+              <div className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${
                 booking.status === 'completed' ? 'bg-gray-500/10 text-gray-400' :
                 booking.status === 'started' || booking.status === 'arriving' ? 'bg-emerald-500/10 text-emerald-500' :
                 booking.status === 'cancelled' ? 'bg-red-500/10 text-red-500' :
                 'bg-blue-500/10 text-blue-500'
               }`}>
-                {booking.status === 'completed' && <CheckCircle2 size={10} />}
-                {booking.status === 'started' && <Navigation size={10} />}
-                {booking.status === 'cancelled' && <XCircle size={10} />}
-                {(booking.status === 'searching' || booking.status === 'accepted') && <Clock size={10} />}
+                {booking.status === 'completed' && <CheckCircle2 size={12} />}
+                {booking.status === 'started' && <Navigation size={12} />}
+                {booking.status === 'cancelled' && <XCircle size={12} />}
+                {(booking.status === 'searching' || booking.status === 'accepted') && <Clock size={12} />}
                 
                 {booking.status === 'started' ? 'Live' : booking.status}
               </div>
@@ -197,9 +197,9 @@ const AdminBookingsPage = () => {
             
           </motion.div>
         )) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-white/[0.02] border border-dashed border-white/10 rounded-3xl">
-            <AlertCircle className="text-gray-600 mb-3" size={32} />
-            <p className="text-gray-400 font-medium">No bookings found.</p>
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#1a1a1a] border border-dashed border-[#2a2a2a] rounded-xl">
+            <AlertCircle className="text-[#9ca3af] mb-3" size={32} />
+            <p className="text-[#9ca3af] font-medium">No bookings found.</p>
           </div>
         )}
       </div>

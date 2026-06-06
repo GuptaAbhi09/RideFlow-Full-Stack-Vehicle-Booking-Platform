@@ -145,26 +145,26 @@ const RideChat = ({ bookingId, role }: RideChatProps) => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="bg-[#1a1a1a] border border-white/10 w-80 sm:w-96 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[500px] max-h-[80vh]"
+            className="bg-[#1a1a1a] border border-[#2a2a2a] w-80 sm:w-96 rounded-xl shadow-xl overflow-hidden flex flex-col h-[500px] max-h-[80vh]"
           >
             {/* Header */}
-            <div className="bg-blue-600 p-4 flex justify-between items-center text-white">
+            <div className="bg-[#1a1a1a] border-b border-[#2a2a2a] p-4 flex justify-between items-center text-[#f5f5f5]">
               <div className="flex items-center gap-2">
-                <MessageSquare size={20} />
-                <h3 className="font-bold">
+                <MessageSquare size={20} className="text-[#9ca3af]" />
+                <h3 className="font-semibold text-[15px]">
                   {role === 'customer' ? 'Chat with Driver' : 'Chat with Customer'}
                 </h3>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/20 rounded-full transition-colors"
+                className="p-1 hover:bg-[#2a2a2a] text-[#9ca3af] hover:text-[#f5f5f5] rounded-md transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* Message Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#121212]">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f0f0f]">
               {isLoading ? (
                 <div className="flex justify-center items-center h-full">
                   <Loader2 className="animate-spin text-blue-500" size={24} />
@@ -180,10 +180,10 @@ const RideChat = ({ bookingId, role }: RideChatProps) => {
                   return (
                     <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                       <div 
-                        className={`max-w-[80%] p-3 rounded-2xl text-sm ${
+                        className={`max-w-[80%] p-3 rounded-xl text-sm ${
                           isMe 
                             ? 'bg-blue-600 text-white rounded-br-sm' 
-                            : 'bg-white/10 text-gray-200 rounded-bl-sm'
+                            : 'bg-[#1a1a1a] border border-[#2a2a2a] text-[#f5f5f5] rounded-bl-sm'
                         }`}
                       >
                         {msg.text}
@@ -199,18 +199,18 @@ const RideChat = ({ bookingId, role }: RideChatProps) => {
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSendMessage} className="p-3 bg-[#1a1a1a] border-t border-white/5 flex gap-2">
+            <form onSubmit={handleSendMessage} className="p-3 bg-[#1a1a1a] border-t border-[#2a2a2a] flex gap-2">
               <input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                className="flex-1 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-sm text-[#f5f5f5] placeholder:text-[#9ca3af] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               />
               <button 
                 type="submit"
                 disabled={!inputText.trim()}
-                className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white w-10 h-10 rounded-xl flex justify-center items-center transition-colors shrink-0"
+                className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white w-10 h-10 rounded-lg flex justify-center items-center transition-colors shrink-0"
               >
                 <Send size={18} className="mr-0.5 mt-0.5" />
               </button>

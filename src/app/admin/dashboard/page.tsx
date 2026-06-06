@@ -105,11 +105,11 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white">System Overview</h1>
-          <p className="text-gray-400 mt-1 text-sm">Manage partner onboarding and fleet verification.</p>
+          <h1 className="text-3xl font-semibold text-[#f5f5f5]">System Overview</h1>
+          <p className="text-[#9ca3af] mt-1 text-sm">Manage partner onboarding and fleet verification.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/20 flex items-center gap-2">
+          <button className="px-5 py-2.5 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#f5f5f5] border border-[#2a2a2a] rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
             Export Report
           </button>
         </div>
@@ -123,33 +123,33 @@ const AdminDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-[#121212] border border-white/10 rounded-2xl p-5 shadow-xl relative overflow-hidden group"
+            className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 relative overflow-hidden group"
           >
-            <div className={`p-2.5 rounded-xl ${card.bg} ${card.color} w-fit mb-3`}>
+            <div className={`p-2 rounded-lg ${card.bg} ${card.color} w-fit mb-3`}>
               <card.icon size={20} />
             </div>
-            <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">{card.label}</p>
-            <h3 className="text-2xl font-bold text-white mt-1">{card.value}</h3>
+            <p className="text-[#9ca3af] text-sm font-medium">{card.label}</p>
+            <h3 className="text-2xl font-semibold text-[#f5f5f5] mt-1">{card.value}</h3>
           </motion.div>
         ))}
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap items-center gap-4 mb-8 p-1.5 bg-white/5 w-full max-w-4xl rounded-2xl border border-white/10 mx-auto">
+      <div className="flex flex-wrap items-center gap-2 mb-8 p-1.5 bg-[#1a1a1a] w-full max-w-4xl rounded-xl border border-[#2a2a2a] mx-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-xl font-bold transition-all relative ${
+            className={`flex-1 flex items-center justify-center gap-3 px-6 py-2.5 rounded-lg font-medium transition-colors relative ${
               activeTab === tab.id 
-                ? 'text-white' 
-                : 'text-gray-500 hover:text-gray-300'
+                ? 'text-[#f5f5f5]' 
+                : 'text-[#9ca3af] hover:text-[#f5f5f5]'
             }`}
           >
             {activeTab === tab.id && (
               <motion.div 
                 layoutId="activeTab"
-                className="absolute inset-0 bg-[#18181b] border border-white/10 rounded-xl shadow-lg"
+                className="absolute inset-0 bg-[#2a2a2a] rounded-lg"
               />
             )}
             <span className="relative z-10 flex items-center gap-2 text-sm">
@@ -262,22 +262,22 @@ interface PendingRowProps {
 
 const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, isUrgent, ownerName }: PendingRowProps) => (
   <motion.div
-    className="bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-white/[0.02] hover:border-white/10 transition-all group flex items-center justify-between gap-6"
+    className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 hover:border-[#3a3a3a] transition-colors group flex items-center justify-between gap-6"
   >
     <div className="flex items-center gap-4 flex-1">
-      <div className={`p-2.5 rounded-xl bg-${color}-500/10 text-${color}-500`}>
+      <div className={`p-2.5 rounded-lg bg-${color}-500/10 text-${color}-500`}>
         <Icon size={20} />
       </div>
       <div className="min-w-0">
-        <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors truncate">{title}</h3>
-        <p className="text-xs text-gray-500 truncate">{subtitle}</p>
+        <h3 className="text-sm font-medium text-[#f5f5f5] group-hover:text-blue-400 transition-colors truncate">{title}</h3>
+        <p className="text-xs text-[#9ca3af] truncate">{subtitle}</p>
       </div>
     </div>
 
     {ownerName && (
       <div className="hidden md:block flex-1">
-        <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Owner</p>
-        <p className="text-xs font-medium text-gray-300">{ownerName}</p>
+        <p className="text-xs font-medium text-[#9ca3af] mb-0.5">Owner</p>
+        <p className="text-sm font-medium text-[#f5f5f5]">{ownerName}</p>
       </div>
     )}
 
@@ -285,7 +285,7 @@ const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, i
       <div className="flex flex-col items-end">
         <div className="flex items-center gap-1.5">
           {isUrgent && <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
-          <span className={`text-[10px] font-bold uppercase tracking-widest ${isUrgent ? 'text-red-500' : 'text-gray-500'}`}>
+          <span className={`text-xs font-medium ${isUrgent ? 'text-red-500' : 'text-[#9ca3af]'}`}>
             {tag}
           </span>
         </div>
@@ -297,10 +297,10 @@ const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, i
           color === 'green' ? `/admin/kyc/${id}` : 
           `/admin/vehicles/${id}`
         }
-        className={`px-5 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 ${
-          color === 'blue' ? 'bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white' :
-          color === 'green' ? 'bg-green-600/10 text-green-500 hover:bg-green-600 hover:text-white' :
-          'bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white'
+        className={`px-5 py-2.5 rounded-lg font-medium text-xs transition-colors flex items-center gap-2 ${
+          color === 'blue' ? 'bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-[#f5f5f5]' :
+          color === 'green' ? 'bg-green-600/10 text-green-500 hover:bg-green-600 hover:text-[#f5f5f5]' :
+          'bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-[#f5f5f5]'
         }`}
       >
         {actionText}
@@ -311,11 +311,11 @@ const PendingRow = ({ id, title, subtitle, tag, icon: Icon, color, actionText, i
 )
 
 const EmptyState = ({ message }: { message: string }) => (
-  <div className="flex flex-col items-center justify-center py-20 border border-dashed border-white/5 rounded-3xl">
-    <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 text-gray-600">
+  <div className="flex flex-col items-center justify-center py-20 border border-dashed border-[#2a2a2a] rounded-xl">
+    <div className="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center mb-3 text-[#9ca3af]">
       <AlertCircle size={24} />
     </div>
-    <p className="text-sm text-gray-500 font-medium">{message}</p>
+    <p className="text-sm text-[#9ca3af] font-medium">{message}</p>
   </div>
 )
 

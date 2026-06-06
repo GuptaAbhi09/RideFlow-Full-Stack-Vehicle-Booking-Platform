@@ -121,14 +121,14 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="flex justify-between items-end mb-2">
-        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <label className="block text-sm font-medium text-[#9ca3af]">
           {label}
         </label>
         {onMapClick && (
           <button 
             type="button" 
             onClick={onMapClick}
-            className={`text-[10px] font-bold uppercase tracking-wider text-${inputColor}-400 flex items-center gap-1 hover:text-${inputColor}-300 transition-colors`}
+            className={`text-xs font-medium text-blue-500 flex items-center gap-1 hover:text-blue-400 transition-colors`}
           >
             <Map size={12} /> Choose on Map
           </button>
@@ -136,7 +136,7 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
       </div>
       <div className="relative flex gap-2">
         <div className="relative flex-1">
-          <div className={`absolute left-4 top-3.5 text-${inputColor}-500`}>
+          <div className={`absolute left-4 top-3.5 text-[#9ca3af]`}>
             {icon}
           </div>
           <input
@@ -148,7 +148,7 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
             }}
             onFocus={() => setShowDropdown(true)}
             placeholder={placeholder}
-            className={`w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-${showCurrentLocation ? '12' : '4'} py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-${inputColor}-500 focus:ring-1 focus:ring-${inputColor}-500 transition-all text-sm`}
+            className={`w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg pl-12 pr-${showCurrentLocation ? '12' : '4'} py-3 text-[#f5f5f5] placeholder:text-[#9ca3af] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm`}
             required
           />
           
@@ -157,7 +157,7 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
               type="button"
               onClick={handleGetCurrentLocation}
               disabled={fetchingLocation}
-              className="absolute right-3 top-2.5 p-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+              className="absolute right-2 top-2 p-2 rounded-md hover:bg-[#2a2a2a] text-[#9ca3af] transition-colors"
               title="Use Current Location"
             >
               {fetchingLocation ? <Loader2 size={16} className="animate-spin" /> : <LocateFixed size={16} />}
@@ -173,10 +173,10 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
-            className="absolute z-50 w-full mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto"
+            className="absolute z-50 w-full mt-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto"
           >
             {loading ? (
-              <div className="p-4 text-center text-gray-500 text-sm flex justify-center items-center gap-2">
+              <div className="p-4 text-center text-[#9ca3af] text-sm flex justify-center items-center gap-2">
                 <Loader2 size={14} className="animate-spin" /> Searching...
               </div>
             ) : suggestions.length > 0 ? (
@@ -184,9 +184,9 @@ const LocationInput = ({ label, icon, placeholder, value, onChange, showCurrentL
                 <div
                   key={i}
                   onClick={() => handleSelect(s.display_name)}
-                  className="px-4 py-3 hover:bg-white/5 cursor-pointer border-b border-white/5 last:border-0 transition-colors"
+                  className="px-4 py-3 hover:bg-[#2a2a2a] cursor-pointer border-b border-[#2a2a2a] last:border-0 transition-colors"
                 >
-                  <p className="text-sm text-gray-200 line-clamp-2">{s.display_name}</p>
+                  <p className="text-sm text-[#f5f5f5] line-clamp-2">{s.display_name}</p>
                 </div>
               ))
             ) : (
@@ -366,18 +366,18 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-[#121212] border border-white/10 w-full max-w-md rounded-3xl p-8 relative pointer-events-auto shadow-2xl"
+              className="bg-[#1a1a1a] border border-[#2a2a2a] w-full max-w-md rounded-xl p-6 relative pointer-events-auto"
             >
               <button 
                 onClick={onClose}
-                className="absolute right-6 top-6 p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                className="absolute right-5 top-5 p-2 rounded-md hover:bg-[#2a2a2a] transition-colors text-[#9ca3af] hover:text-[#f5f5f5]"
               >
                 <X size={20} />
               </button>
 
-              <div className="mb-8">
-                <h2 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Book Your Ride</h2>
-                <p className="text-gray-400 text-sm">Enter your details below and we'll get you moving instantly.</p>
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold text-[#f5f5f5] mb-2">Book Your Ride</h2>
+                <p className="text-[#9ca3af] text-sm">Enter your details below and we'll get you moving instantly.</p>
               </div>
 
               <form onSubmit={!estimateData ? handleGetEstimate : (e) => { e.preventDefault(); handleConfirmBooking(); }} className="space-y-5">
@@ -414,11 +414,11 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
 
                   {/* Mobile Number */}
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
                       Mobile Number
                     </label>
                     <div className="relative">
-                      <div className="absolute left-4 top-3.5 text-gray-400">
+                      <div className="absolute left-4 top-3.5 text-[#9ca3af]">
                         <Phone size={18} />
                       </div>
                       <input
@@ -427,7 +427,7 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                         onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))} // Only allow numbers
                         maxLength={10}
                         placeholder="Enter 10-digit number"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg pl-12 pr-4 py-3 text-[#f5f5f5] placeholder:text-[#9ca3af] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
                         required
                       />
                     </div>
@@ -435,17 +435,17 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
 
                   {/* Vehicle Type */}
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
                       Vehicle Type
                     </label>
                     <div className="relative">
-                      <div className="absolute left-4 top-3.5 text-gray-400">
+                      <div className="absolute left-4 top-3.5 text-[#9ca3af]">
                         <Car size={18} />
                       </div>
                       <select
                         value={vehicle}
                         onChange={(e) => setVehicle(e.target.value)}
-                        className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm appearance-none cursor-pointer"
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg pl-12 pr-4 py-3 text-[#f5f5f5] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm appearance-none cursor-pointer"
                         required
                       >
                         {vehicleTypes.map((type) => (
@@ -467,13 +467,13 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 overflow-hidden"
+                        className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4 overflow-hidden"
                       >
                         <div className="flex justify-between items-center mb-2">
-                          <p className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Estimated Fare</p>
-                          <p className="text-2xl font-extrabold text-white">₹{estimateData.fare}</p>
+                          <p className="text-[#9ca3af] font-medium text-sm">Estimated Fare</p>
+                          <p className="text-xl font-semibold text-[#f5f5f5]">₹{estimateData.fare}</p>
                         </div>
-                        <div className="flex justify-between text-xs text-gray-400 font-medium">
+                        <div className="flex justify-between text-xs text-[#9ca3af]">
                           <span>Distance: {estimateData.distanceKm} km</span>
                           <span>Est. Time: {estimateData.durationMins} mins</span>
                         </div>
@@ -486,7 +486,7 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full mt-6 py-4 ${estimateData ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/20'} text-white rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2`}
+                  className="w-full mt-6 bg-blue-600 text-white rounded-lg px-5 py-2.5 hover:opacity-90 transition-opacity font-medium flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

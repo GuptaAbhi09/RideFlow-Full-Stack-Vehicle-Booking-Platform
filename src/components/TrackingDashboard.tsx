@@ -301,10 +301,10 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
   }
 
   return (
-    <div className="h-screen bg-[#0a0a0a] pt-[72px] flex flex-col md:flex-row overflow-hidden">
+    <div className="h-screen bg-[#0f0f0f] pt-[72px] flex flex-col md:flex-row overflow-hidden">
       
       {/* Left Panel: Map */}
-      <div className="w-full md:w-1/2 lg:w-[55%] relative h-[50vh] md:h-full z-0 bg-[#121212] border-r border-white/10">
+      <div className="w-full md:w-1/2 lg:w-[55%] relative h-[50vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
         <MapTracking 
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
@@ -319,41 +319,41 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
       </div>
 
       {/* Right Panel: Details & Status */}
-      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0a0a0a] flex flex-col gap-6 relative z-10 custom-scrollbar">
+      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
         
         {/* Header */}
-        <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center justify-between gap-4">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Ride Status</h1>
-            <p className="text-gray-400 text-xs">
+            <h1 className="text-xl font-semibold text-[#f5f5f5] mb-1">Ride Status</h1>
+            <p className="text-[#9ca3af] text-xs">
               ID: <span className="font-mono text-gray-300">{booking.id.slice(-8).toUpperCase()}</span>
             </p>
           </div>
           <div>
             {currentStatus === 'searching' ? (
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-                </span>
-                <span className="text-blue-400 text-xs font-bold tracking-wide uppercase">Finding Driver</span>
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-3 py-1 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                <span className="text-[#f5f5f5] text-xs font-medium">Finding Driver</span>
               </div>
             ) : (
-              <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold tracking-wide uppercase border border-emerald-500/20">
-                {currentStatus}
-              </span>
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-3 py-1 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <span className="text-[#f5f5f5] text-xs font-medium capitalize">
+                  {currentStatus}
+                </span>
+              </div>
             )}
           </div>
         </div>
 
         {/* Conditional Rendering based on Trip Completion / Rating */}
         {isRatingMode ? (
-          <div className="flex-1 flex flex-col justify-center items-center p-8 bg-gradient-to-br from-yellow-900/10 to-transparent border border-yellow-500/20 rounded-3xl">
-            <div className="w-20 h-20 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(234,179,8,0.3)]">
-              <Star size={40} className="fill-yellow-400" />
+          <div className="flex-1 flex flex-col justify-center items-center p-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl">
+            <div className="mb-6">
+              <Star size={40} className="text-[#9ca3af]" />
             </div>
-            <h2 className="text-3xl font-extrabold text-white mb-2">Rate Your Driver</h2>
-            <p className="text-gray-400 text-center mb-8">How was your trip with {driverInfo?.name || "your driver"}?</p>
+            <h2 className="text-2xl font-semibold text-[#f5f5f5] mb-2">Rate Your Driver</h2>
+            <p className="text-[#9ca3af] text-center mb-8">How was your trip with {driverInfo?.name || "your driver"}?</p>
             
             <div className="flex gap-2 mb-8">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -364,7 +364,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
                 >
                   <Star 
                     size={48} 
-                    className={`${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'} transition-colors`} 
+                    className={`${star <= rating ? 'text-[#facc15] fill-[#facc15]' : 'text-[#374151]'} transition-colors`} 
                   />
                 </button>
               ))}
@@ -374,13 +374,13 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
               value={review}
               onChange={(e) => setReview(e.target.value)}
               placeholder="Leave a comment (optional)..."
-              className="w-full bg-[#121212] border border-white/10 rounded-xl p-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all mb-8 resize-none h-32"
+              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4 text-[#f5f5f5] placeholder:text-[#9ca3af] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all mb-8 resize-none h-32 text-sm"
             />
 
             <button
               onClick={submitRating}
               disabled={isSubmittingRating}
-              className="w-full py-4 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-yellow-600/20 disabled:opacity-50"
+              className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSubmittingRating ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -390,34 +390,34 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             </button>
             <button 
               onClick={() => router.push('/')}
-              className="mt-4 text-gray-500 text-sm hover:text-white transition-colors"
+              className="mt-4 text-[#9ca3af] text-sm hover:text-[#f5f5f5] transition-colors"
             >
               Skip
             </button>
           </div>
         ) : currentStatus === 'completed' ? (
-          <div className="flex-1 flex flex-col justify-center items-center p-8 bg-gradient-to-br from-emerald-900/10 to-transparent border border-emerald-500/20 rounded-3xl">
-            <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(16,185,129,0.3)]">
-              <CheckCircle size={40} />
+          <div className="flex-1 flex flex-col justify-center items-center p-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl">
+            <div className="mb-6">
+              <CheckCircle size={40} className="text-green-500" />
             </div>
-            <h2 className="text-3xl font-extrabold text-white mb-2">Trip Completed!</h2>
-            <p className="text-gray-400 text-center mb-8">You have arrived at your destination. Please complete your payment to finish the ride.</p>
+            <h2 className="text-2xl font-semibold text-[#f5f5f5] mb-2">Trip Completed!</h2>
+            <p className="text-[#9ca3af] text-center mb-8">You have arrived at your destination. Please complete your payment to finish the ride.</p>
             
-            <div className="w-full bg-[#121212] border border-white/10 rounded-2xl p-6 shadow-xl mb-8">
-              <div className="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
-                <span className="text-gray-400 text-sm">Total Fare</span>
-                <span className="text-3xl font-extrabold text-white">₹{booking.fare}</span>
+            <div className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-6 mb-8">
+              <div className="flex justify-between items-center mb-4 pb-4 border-b border-[#2a2a2a]">
+                <span className="text-[#9ca3af] text-sm">Total Fare</span>
+                <span className="text-2xl font-semibold text-[#f5f5f5]">₹{booking.fare}</span>
               </div>
-              <div className="flex justify-between items-center text-sm text-gray-500">
+              <div className="flex justify-between items-center text-sm text-[#9ca3af]">
                 <span>Distance Traveled</span>
-                <span className="text-gray-300 font-medium">{distance || booking.distance}</span>
+                <span className="text-[#f5f5f5] font-medium">{distance || booking.distance}</span>
               </div>
             </div>
 
             <button
               onClick={handlePayment}
               disabled={isPaying}
-              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
+              className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isPaying ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -433,31 +433,29 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
           <>
             {/* Estimation & Available Drivers (Mock Data) */}
             <div className={`grid ${currentStatus !== 'searching' ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
-              <div className="bg-gradient-to-br from-blue-900/20 to-blue-900/5 border border-blue-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-blue-400 text-[10px] font-bold uppercase tracking-wider">Trip Estimate</p>
-                  <Navigation size={14} className="text-blue-400" />
+                  <p className="text-[#9ca3af] text-xs font-medium">Trip Estimate</p>
+                  <Navigation size={14} className="text-[#9ca3af]" />
                 </div>
-                <div className="flex items-baseline gap-1 text-white">
-                  <span className="text-2xl font-extrabold">{booking.fare ? `₹${booking.fare}` : duration || '--'}</span>
+                <div className="flex items-baseline gap-1 text-[#f5f5f5]">
+                  <span className="text-xl font-semibold">{booking.fare ? `₹${booking.fare}` : duration || '--'}</span>
                 </div>
-                <span className="text-gray-400 text-xs font-medium">{booking.distance ? `${booking.distance}` : distance || 'Calculating...'}</span>
+                <span className="text-[#9ca3af] text-xs">{booking.distance ? `${booking.distance}` : distance || 'Calculating...'}</span>
               </div>
 
               {currentStatus !== 'searching' && (
-                <div className="bg-gradient-to-br from-emerald-900/20 to-emerald-900/5 border border-emerald-500/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
+                <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-                      Status
-                    </p>
-                    <Users size={14} className="text-emerald-400" />
+                    <p className="text-[#9ca3af] text-xs font-medium">Status</p>
+                    <Users size={14} className="text-[#9ca3af]" />
                   </div>
-                  <div className="flex items-baseline gap-1 text-white">
-                    <span className="font-extrabold text-xl capitalize">
+                  <div className="flex items-baseline gap-1 text-[#f5f5f5]">
+                    <span className="font-semibold text-lg capitalize">
                       {currentStatus}
                     </span>
                   </div>
-                  <span className="text-gray-400 text-xs font-medium">
+                  <span className="text-[#9ca3af] text-xs">
                     {currentStatus === 'accepted' && "Driver is on the way"}
                     {currentStatus === 'arriving' && "Driver is outside"}
                     {currentStatus === 'started' && "Heading to destination"}
@@ -468,52 +466,52 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
 
             {/* OTP Card */}
             {booking.startOtp && (currentStatus === 'accepted' || currentStatus === 'arriving') && (
-              <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-5 shadow-xl flex items-center justify-between">
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-500 text-[10px] font-bold uppercase tracking-wider mb-1">Ride PIN</p>
-                  <p className="text-sm text-gray-300">Give this PIN to your driver</p>
+                  <p className="text-[#9ca3af] text-xs font-medium mb-1">Ride PIN</p>
+                  <p className="text-sm text-[#f5f5f5]">Give this PIN to your driver</p>
                 </div>
-                <div className="bg-yellow-500/20 border border-yellow-500/30 px-6 py-2 rounded-xl">
-                  <span className="text-2xl font-extrabold text-yellow-400 tracking-widest">{booking.startOtp}</span>
+                <div className="bg-[#0f0f0f] border border-[#2a2a2a] px-4 py-2 rounded-lg">
+                  <span className="text-lg font-mono text-[#f5f5f5] tracking-widest">{booking.startOtp}</span>
                 </div>
               </div>
             )}
 
             {/* Details */}
-            <div className="bg-[#121212] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4 mb-8">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">Ride Details</h2>
+            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 space-y-4 mb-8">
+              <h2 className="text-sm font-medium text-[#f5f5f5]">Ride Details</h2>
               
               <div className="flex flex-col gap-4 relative">
                 {/* Connecting line */}
-                <div className="absolute left-4 top-6 bottom-6 w-0.5 bg-white/10 z-0"></div>
+                <div className="absolute left-4 top-6 bottom-6 w-[1px] bg-[#2a2a2a] z-0"></div>
 
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-1.5 bg-[#0a0a0a] border border-blue-500/50 text-blue-500 rounded-full mt-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="p-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-full mt-1">
+                    <div className="w-1.5 h-1.5 bg-[#9ca3af] rounded-full"></div>
                   </div>
-                  <div className="flex-1 pb-4 border-b border-white/5">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Pickup</p>
-                    <p className="text-sm text-gray-200 line-clamp-2">{booking.pickup}</p>
+                  <div className="flex-1 pb-4 border-b border-[#2a2a2a]">
+                    <p className="text-xs text-[#9ca3af] mb-1">Pickup</p>
+                    <p className="text-sm text-[#f5f5f5] line-clamp-2">{booking.pickup}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-1.5 bg-[#0a0a0a] border border-red-500/50 text-red-500 rounded-full mt-1">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <div className="p-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-full mt-1">
+                    <div className="w-1.5 h-1.5 bg-[#9ca3af] rounded-full"></div>
                   </div>
-                  <div className="flex-1 pb-4 border-b border-white/5">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Drop</p>
-                    <p className="text-sm text-gray-200 line-clamp-2">{booking.drop}</p>
+                  <div className="flex-1 pb-4 border-b border-[#2a2a2a]">
+                    <p className="text-xs text-[#9ca3af] mb-1">Drop</p>
+                    <p className="text-sm text-[#f5f5f5] line-clamp-2">{booking.drop}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4 relative z-10 pl-2">
-                  <div className="text-purple-500">
+                  <div className="text-[#9ca3af]">
                     <Car size={18} />
                   </div>
                   <div className="flex-1 flex justify-between items-center">
-                    <p className="text-sm text-gray-400">Requested Vehicle</p>
-                    <p className="text-sm text-white font-bold">{booking.vehicleType}</p>
+                    <p className="text-sm text-[#9ca3af]">Requested Vehicle</p>
+                    <p className="text-sm text-[#f5f5f5] font-medium">{booking.vehicleType}</p>
                   </div>
                 </div>
               </div>
@@ -523,7 +521,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             <button
               onClick={handleCancelRide}
               disabled={isCancelling}
-              className="w-full py-4 mt-auto bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-auto text-red-500 font-medium hover:opacity-80 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 py-2.5"
             >
               {isCancelling ? (
                 <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />

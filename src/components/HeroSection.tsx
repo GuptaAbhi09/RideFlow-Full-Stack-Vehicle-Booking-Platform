@@ -13,7 +13,7 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
   ]
 
   return (
-    <section className="relative min-h-[90vh] py-24 w-full overflow-hidden flex items-center justify-center bg-[#0a0a0a] pt-32 pb-20">
+    <section className="relative min-h-[90vh] py-24 w-full overflow-hidden flex items-center justify-center bg-[#0f0f0f] pt-32 pb-20">
       <div 
         className="absolute inset-0 z-0 scale-110"
         style={{ 
@@ -25,83 +25,73 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
         }} 
       />
       
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/50 to-[#0a0a0a] z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f0f0f]/50 to-[#0f0f0f] z-10" />
 
       <div className="relative z-20 max-w-7xl mx-auto px-6 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
           className="mb-6 flex justify-center"
         >
-          <span className="px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium backdrop-blur-md">
+          <span className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-full px-3 py-1 text-xs font-medium text-[#9ca3af]">
             The Future of Urban Mobility
           </span>
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl md:text-5xl font-semibold text-[#f5f5f5] leading-snug mb-6"
         >
-          Your Journey, <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Perfected.</span>
+          Your Journey, Perfected.
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-base md:text-lg text-[#9ca3af] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Experience seamless vehicle booking with real-time tracking, secure payments, and a fleet tailored for every need.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
           className="flex items-center justify-center gap-4 mb-16"
         >
           <button 
             onClick={onBookNow}
-            className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-blue-600/20 flex items-center gap-2 overflow-hidden cursor-pointer"
+            className="bg-blue-600 text-white rounded-lg px-5 py-2.5 transition-opacity hover:opacity-90 flex items-center gap-2 font-medium"
           >
-            <span className="relative z-10">Book Now</span>
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            <span>Book Now</span>
+            <ChevronRight className="w-5 h-5" />
           </button>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
+          transition={{ duration: 0.5 }}
           className="flex flex-wrap justify-center gap-x-12 gap-y-6 max-w-4xl mx-auto"
         >
           {vehicleIcons.map(({ Icon, label }) => (
-            <motion.div
+            <div
               key={label}
-              whileHover={{ y: -5 }}
               className="flex flex-col items-center gap-2 group cursor-pointer"
             >
-              <div className="text-gray-400 group-hover:text-blue-500 transition-colors duration-300">
+              <div className="text-[#9ca3af] group-hover:text-blue-600 transition-colors duration-200">
                 <Icon size={32} />
               </div>
-              <span className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-300">
+              <span className="text-[#9ca3af] text-sm font-medium group-hover:text-[#f5f5f5] transition-colors duration-200">
                 {label}
               </span>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
-      </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-1 h-12 rounded-full bg-gradient-to-b from-blue-500 to-transparent opacity-50"
-        />
       </div>
     </section>
   )

@@ -110,7 +110,7 @@ const VehicleReviewPage = () => {
         </button>
 
         <div className="flex items-center gap-3">
-          <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${
+          <span className={`px-4 py-1.5 rounded-full text-xs font-medium ${
             data.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
             data.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
             'bg-red-500/10 text-red-500 border border-red-500/20'
@@ -148,9 +148,9 @@ const VehicleReviewPage = () => {
               </div>
 
               {data.imageUrl && data.imageUrl !== "https://placeholder.com/default-vehicle.png" && (
-                <div className="border-t border-white/5 pt-4">
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-3">Vehicle Photo</p>
-                  <div className="w-full max-w-md aspect-video relative rounded-xl overflow-hidden border border-white/10 group">
+                <div className="border-t border-[#2a2a2a] pt-4">
+                  <p className="text-xs font-medium text-[#9ca3af] mb-3">Vehicle Photo</p>
+                  <div className="w-full max-w-md aspect-video relative rounded-xl overflow-hidden border border-[#2a2a2a] group">
                     <Image 
                       src={data.imageUrl} 
                       alt="Vehicle" 
@@ -161,7 +161,7 @@ const VehicleReviewPage = () => {
                       href={data.imageUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-lg text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-black/70"
+                      className="absolute top-4 right-4 p-2 bg-[#1a1a1a]/80 backdrop-blur-md rounded-lg text-[#f5f5f5] opacity-0 group-hover:opacity-100 transition-all hover:bg-[#2a2a2a]"
                     >
                       <ExternalLink size={16} />
                     </a>
@@ -175,15 +175,15 @@ const VehicleReviewPage = () => {
         {/* Sidebar Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 space-y-6">
-            <div className="bg-[#121212] border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <h3 className="text-xl font-bold text-white mb-2">Final Activation</h3>
-              <p className="text-gray-400 text-sm mb-6">Approving this vehicle will activate the partner's account and make them LIVE on the platform.</p>
+            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2">Final Activation</h3>
+              <p className="text-[#9ca3af] text-sm mb-6">Approving this vehicle will activate the partner's account and make them LIVE on the platform.</p>
 
               <div className="space-y-3">
                 <button 
                   onClick={() => handleAction('approved')}
                   disabled={submitting}
-                  className="w-full py-4 bg-green-600 hover:bg-green-500 disabled:bg-green-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-green-600/20 flex items-center justify-center gap-2 text-sm"
+                  className="w-full py-2.5 bg-green-600 hover:opacity-90 disabled:opacity-50 text-white rounded-lg font-medium transition-opacity flex items-center justify-center gap-2 text-sm"
                 >
                   <CheckCircle size={18} />
                   Approve & Go Live
@@ -192,7 +192,7 @@ const VehicleReviewPage = () => {
                 <button 
                   onClick={() => setShowRejectModal(true)}
                   disabled={submitting}
-                  className="w-full py-3 bg-white/5 border border-white/10 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 text-gray-400 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm"
+                  className="w-full py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 text-[#9ca3af] rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm"
                 >
                   <XCircle size={18} />
                   Reject Vehicle
@@ -206,34 +206,34 @@ const VehicleReviewPage = () => {
       {/* Rejection Modal */}
       <AnimatePresence>
         {showRejectModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#0f0f0f]/80 backdrop-blur-sm">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-[#121212] border border-white/10 p-8 rounded-[2rem] max-w-md w-full shadow-2xl"
+              className="bg-[#1a1a1a] border border-[#2a2a2a] p-8 rounded-xl max-w-md w-full"
             >
-              <h3 className="text-2xl font-bold text-white mb-2 text-center">Reject Vehicle?</h3>
-              <p className="text-gray-400 text-center text-sm mb-6">Provide a reason so the partner can fix it.</p>
+              <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2 text-center">Reject Vehicle?</h3>
+              <p className="text-[#9ca3af] text-center text-sm mb-6">Provide a reason so the partner can fix it.</p>
               
               <textarea 
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="Ex: Image is not clear, update rates..."
-                className="w-full h-32 bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:outline-none focus:border-red-500 transition-all resize-none mb-6"
+                className="w-full h-32 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4 text-[#f5f5f5] focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
               />
 
               <div className="flex gap-3">
                 <button 
                   onClick={() => setShowRejectModal(false)}
-                  className="flex-1 py-4 bg-white/5 rounded-2xl font-bold text-gray-400 hover:bg-white/10 transition-all"
+                  className="flex-1 py-2.5 bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg font-medium text-[#9ca3af] hover:text-[#f5f5f5] transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={() => handleAction('rejected')}
                   disabled={!rejectionReason || submitting}
-                  className="flex-1 py-4 bg-red-600 rounded-2xl font-bold text-white hover:bg-red-500 disabled:bg-red-900 transition-all shadow-lg shadow-red-600/20"
+                  className="flex-1 py-2.5 bg-red-600 rounded-lg font-medium text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
                 >
                   Confirm Reject
                 </button>
@@ -257,13 +257,13 @@ const Section = ({ icon: Icon, title, children, color }: SectionProps) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-[#121212] border border-white/5 rounded-[1.5rem] p-6 shadow-xl"
+    className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6"
   >
     <div className="flex items-center gap-3 mb-6">
-      <div className={`p-2.5 rounded-xl bg-${color}-500/10 text-${color}-500`}>
+      <div className={`p-2.5 rounded-lg bg-${color}-500/10 text-${color}-500`}>
         <Icon size={20} />
       </div>
-      <h2 className="text-lg font-bold text-white uppercase tracking-tight">{title}</h2>
+      <h2 className="text-lg font-semibold text-[#f5f5f5]">{title}</h2>
     </div>
     {children}
   </motion.div>
@@ -276,12 +276,12 @@ interface InfoItemProps {
 }
 
 const InfoItem = ({ icon: Icon, label, value }: InfoItemProps) => (
-  <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-    <div className="flex items-center gap-2 mb-0.5 text-gray-500">
-      <Icon size={12} />
-      <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
+  <div className="p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]">
+    <div className="flex items-center gap-2 mb-0.5 text-[#9ca3af]">
+      <Icon size={14} />
+      <span className="text-xs font-medium">{label}</span>
     </div>
-    <p className="text-xs font-medium text-white">{value}</p>
+    <p className="text-sm font-medium text-[#f5f5f5] mt-1">{value}</p>
   </div>
 )
 

@@ -196,10 +196,10 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
   }
 
   return (
-    <div className="h-screen bg-[#0a0a0a] pt-[72px] flex flex-col md:flex-row overflow-hidden">
+    <div className="h-screen bg-[#0f0f0f] pt-[72px] flex flex-col md:flex-row overflow-hidden">
       
       {/* Left Panel: Map */}
-      <div className="w-full md:w-1/2 lg:w-[60%] relative h-[50vh] md:h-full z-0 bg-[#121212] border-r border-white/10">
+      <div className="w-full md:w-1/2 lg:w-[60%] relative h-[50vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
         <MapTracking 
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
@@ -214,36 +214,33 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
       </div>
 
       {/* Right Panel: Trip Details & Controls */}
-      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0a0a0a] flex flex-col gap-6 relative z-10 custom-scrollbar">
+      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
         
         {/* Header */}
-        <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center justify-between gap-4">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Active Trip</h1>
-            <p className="text-gray-400 text-xs">
+            <h1 className="text-xl font-semibold text-[#f5f5f5] mb-1">Active Trip</h1>
+            <p className="text-[#9ca3af] text-xs">
               ID: <span className="font-mono text-gray-300">{booking.id.slice(-8).toUpperCase()}</span>
             </p>
           </div>
           <div>
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold tracking-wide uppercase border border-emerald-500/20">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
+            <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#f5f5f5] text-xs font-medium">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Live Tracking
             </span>
           </div>
         </div>
 
         {/* GPS Status */}
-        <div className="bg-gradient-to-br from-blue-900/20 to-blue-900/5 border border-blue-500/20 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full ${currentLocation ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400 animate-pulse'}`}>
+            <div className={`text-[#9ca3af]`}>
               <Compass size={20} />
             </div>
             <div>
-              <p className="text-white text-sm font-bold">GPS Signal</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-[#f5f5f5] text-sm font-medium">GPS Signal</p>
+              <p className="text-xs text-[#9ca3af]">
                 {currentLocation ? `Broadcasting: ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : 'Acquiring satellites...'}
               </p>
             </div>
@@ -251,29 +248,29 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         </div>
 
         {/* Details */}
-        <div className="bg-[#121212] border border-white/10 rounded-2xl p-5 shadow-xl space-y-4 flex-1">
-          <h2 className="text-sm font-bold text-white uppercase tracking-wider">Navigation Details</h2>
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 space-y-4 flex-1">
+          <h2 className="text-sm font-medium text-[#f5f5f5]">Navigation Details</h2>
           
           <div className="flex flex-col gap-4 relative">
-            <div className="absolute left-4 top-6 bottom-6 w-0.5 bg-white/10 z-0"></div>
+            <div className="absolute left-4 top-6 bottom-6 w-[1px] bg-[#2a2a2a] z-0"></div>
 
             <div className="flex items-start gap-4 relative z-10">
-              <div className="p-1.5 bg-[#0a0a0a] border border-blue-500/50 text-blue-500 rounded-full mt-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="p-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-full mt-1">
+                <div className="w-1.5 h-1.5 bg-[#9ca3af] rounded-full"></div>
               </div>
-              <div className="flex-1 pb-4 border-b border-white/5">
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Pickup Customer</p>
-                <p className="text-sm text-gray-200 line-clamp-2">{booking.pickup}</p>
+              <div className="flex-1 pb-4 border-b border-[#2a2a2a]">
+                <p className="text-xs text-[#9ca3af] mb-1">Pickup Customer</p>
+                <p className="text-sm text-[#f5f5f5] line-clamp-2">{booking.pickup}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 relative z-10">
-              <div className="p-1.5 bg-[#0a0a0a] border border-red-500/50 text-red-500 rounded-full mt-1">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              <div className="p-2 bg-[#0f0f0f] border border-[#2a2a2a] rounded-full mt-1">
+                <div className="w-1.5 h-1.5 bg-[#9ca3af] rounded-full"></div>
               </div>
-              <div className="flex-1 pb-4 border-b border-white/5">
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Dropoff Location</p>
-                <p className="text-sm text-gray-200 line-clamp-2">{booking.drop}</p>
+              <div className="flex-1 pb-4 border-b border-[#2a2a2a]">
+                <p className="text-xs text-[#9ca3af] mb-1">Dropoff Location</p>
+                <p className="text-sm text-[#f5f5f5] line-clamp-2">{booking.drop}</p>
               </div>
             </div>
           </div>
@@ -283,11 +280,11 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         <div className="mt-auto flex flex-col gap-3">
           
           {currentStatus === 'completed' ? (
-            <div className="w-full py-8 bg-emerald-600/10 border border-emerald-500/20 rounded-xl flex flex-col items-center justify-center gap-4">
-              <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+            <div className="w-full py-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl flex flex-col items-center justify-center gap-4">
+              <div className="w-8 h-8 border-4 border-[#2a2a2a] border-t-blue-500 rounded-full animate-spin" />
               <div className="text-center">
-                <p className="text-emerald-500 font-bold">Waiting for Payment</p>
-                <p className="text-xs text-emerald-500/60 mt-1">Customer is paying on their device...</p>
+                <p className="text-[#f5f5f5] font-medium">Waiting for Payment</p>
+                <p className="text-xs text-[#9ca3af] mt-1">Customer is paying on their device...</p>
               </div>
             </div>
           ) : (
@@ -296,7 +293,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
                 <button
                   onClick={() => updateStatus('arriving')}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+                  className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -313,7 +310,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
                 <button
                   onClick={() => setShowOtpModal(true)}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg disabled:opacity-50"
+                  className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   <KeyRound size={20} />
                   Enter PIN to Start Journey
@@ -324,7 +321,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
                 <button
                   onClick={() => updateStatus('completed')}
                   disabled={isProcessing}
-                  className="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
+                  className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -340,7 +337,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
               <button
                 onClick={handleCancelTrip}
                 disabled={isProcessing || isCancelling}
-                className="w-full py-4 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full py-2.5 mt-2 text-red-500 font-medium hover:opacity-80 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isCancelling ? (
                   <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
@@ -372,13 +369,13 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#121212] border border-white/10 w-full max-w-sm rounded-3xl p-8 relative z-10 shadow-2xl"
+              className="bg-[#1a1a1a] border border-[#2a2a2a] w-full max-w-sm rounded-xl p-8 relative z-10"
             >
-              <div className="flex justify-center mb-4 text-yellow-500">
+              <div className="flex justify-center mb-4 text-[#9ca3af]">
                 <KeyRound size={48} />
               </div>
-              <h2 className="text-2xl font-bold text-center text-white mb-2">Enter Ride PIN</h2>
-              <p className="text-gray-400 text-center text-sm mb-6">Ask the customer for their 4-digit PIN to start the journey.</p>
+              <h2 className="text-xl font-semibold text-center text-[#f5f5f5] mb-2">Enter Ride PIN</h2>
+              <p className="text-[#9ca3af] text-center text-sm mb-6">Ask the customer for their 4-digit PIN to start the journey.</p>
               
               <form onSubmit={handleStartTrip}>
                 <input
@@ -387,14 +384,14 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="0000"
-                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl py-4 text-center text-3xl font-mono text-white tracking-[1em] focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all mb-6"
+                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg py-4 text-center text-3xl font-mono text-[#f5f5f5] tracking-[1em] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all mb-6"
                   required
                 />
                 
                 <button
                   type="submit"
                   disabled={isProcessing || otp.length !== 4}
-                  className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                  className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -72,7 +72,7 @@ const UserDetailsPage = () => {
         </button>
 
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-500 border border-blue-500/20">
+          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20">
             Account Status: Active
           </span>
         </div>
@@ -84,29 +84,29 @@ const UserDetailsPage = () => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-[#121212] border border-white/5 rounded-3xl p-8 text-center shadow-xl"
+            className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-8 text-center"
           >
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-2xl shadow-blue-600/20 uppercase">
+            <div className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-3xl mx-auto mb-4 uppercase">
               {data.user.name.charAt(0)}
             </div>
-            <h2 className="text-xl font-bold text-white">{data.user.name}</h2>
-            <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">{data.user.role}</p>
+            <h2 className="text-xl font-semibold text-[#f5f5f5]">{data.user.name}</h2>
+            <p className="text-xs text-[#9ca3af] mt-1 font-medium capitalize">{data.user.role}</p>
             
-            <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500 font-medium">Customer ID</span>
-                <span className="text-gray-300 font-mono">{data.user._id.slice(-8)}</span>
+            <div className="mt-8 pt-8 border-t border-[#2a2a2a] space-y-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#9ca3af] font-medium">Customer ID</span>
+                <span className="text-[#f5f5f5] font-mono">{data.user._id.slice(-8)}</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500 font-medium">Member Since</span>
-                <span className="text-gray-300">{new Date(data.user.createdAt).toLocaleDateString()}</span>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#9ca3af] font-medium">Member Since</span>
+                <span className="text-[#f5f5f5]">{new Date(data.user.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
           </motion.div>
 
-          <div className="bg-blue-500/5 border border-blue-500/10 rounded-2xl p-4 flex gap-3">
+          <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex gap-3">
             <Shield size={18} className="text-blue-500 shrink-0" />
-            <p className="text-[10px] text-gray-400 leading-relaxed font-medium">
+            <p className="text-xs text-[#9ca3af] leading-relaxed font-medium">
               This is a standard customer account. Standard accounts can book rides but do not have partner-level vehicle or payout access.
             </p>
           </div>
@@ -132,25 +132,25 @@ const Section = ({ icon: Icon, title, children, color }: any) => (
   <motion.div 
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-[#121212] border border-white/5 rounded-3xl p-6 shadow-xl"
+    className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6"
   >
     <div className="flex items-center gap-3 mb-6">
-      <div className={`p-2.5 rounded-xl ${color === 'blue' ? 'bg-blue-500/10 text-blue-500' : 'bg-white/5 text-gray-500'}`}>
+      <div className={`p-2.5 rounded-lg ${color === 'blue' ? 'bg-blue-500/10 text-blue-500' : 'bg-[#2a2a2a] text-[#9ca3af]'}`}>
         <Icon size={18} />
       </div>
-      <h2 className="text-lg font-bold text-white uppercase tracking-tight">{title}</h2>
+      <h2 className="text-lg font-semibold text-[#f5f5f5]">{title}</h2>
     </div>
     {children}
   </motion.div>
 )
 
 const InfoItem = ({ icon: Icon, label, value }: any) => (
-  <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-    <div className="flex items-center gap-2 mb-0.5 text-gray-500">
-      <Icon size={12} />
-      <span className="text-[9px] font-bold uppercase tracking-widest">{label}</span>
+  <div className="p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]">
+    <div className="flex items-center gap-2 mb-0.5 text-[#9ca3af]">
+      <Icon size={14} />
+      <span className="text-xs font-medium">{label}</span>
     </div>
-    <p className="text-xs font-medium text-white">{value}</p>
+    <p className="text-sm font-medium text-[#f5f5f5] mt-1">{value}</p>
   </div>
 )
 

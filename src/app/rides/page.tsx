@@ -75,68 +75,68 @@ export default function RideHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0f0f0f] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       
       {/* Hidden PDF Renderer */}
       <ReceiptPDF booking={activePdfBooking} />
 
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-white mb-8">My Rides</h1>
+        <h1 className="text-3xl font-semibold text-[#f5f5f5] mb-8">My Rides</h1>
 
         {isLoading ? (
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
           </div>
         ) : rides.length === 0 ? (
-          <div className="text-center py-20 bg-[#121212] rounded-2xl border border-white/5">
-            <Navigation className="mx-auto h-12 w-12 text-gray-600 mb-4" />
-            <h3 className="text-xl font-medium text-white mb-2">No past rides</h3>
-            <p className="text-gray-400">You haven't taken any trips yet.</p>
+          <div className="text-center py-20 bg-[#1a1a1a] rounded-xl border border-[#2a2a2a]">
+            <Navigation className="mx-auto h-12 w-12 text-[#9ca3af] mb-4" />
+            <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2">No past rides</h3>
+            <p className="text-[#9ca3af]">You haven't taken any trips yet.</p>
           </div>
         ) : (
           <div className="space-y-6">
             {rides.map((ride) => (
-              <div key={ride._id} className="bg-[#121212] border border-white/5 rounded-2xl p-6 transition-all hover:border-white/10">
+              <div key={ride._id} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 transition-colors hover:border-[#3a3a3a]">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                   <div>
-                    <h3 className="text-lg font-bold text-white capitalize">{ride.vehicleType} Ride</h3>
-                    <p className="text-sm text-gray-400">{format(new Date(ride.createdAt), 'MMMM dd, yyyy • h:mm a')}</p>
+                    <h3 className="text-lg font-semibold text-[#f5f5f5] capitalize">{ride.vehicleType} Ride</h3>
+                    <p className="text-sm text-[#9ca3af] mt-1">{format(new Date(ride.createdAt), 'MMMM dd, yyyy • h:mm a')}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className={`px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2 ${
+                    <div className={`px-4 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 ${
                       ride.status === 'completed' 
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                        ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+                        : 'bg-red-500/10 text-red-500 border border-red-500/20'
                     }`}>
                       {ride.status === 'completed' ? <CheckCircle size={16} /> : <XCircle size={16} />}
                       <span className="capitalize">{ride.status}</span>
                     </div>
-                    <span className="text-2xl font-extrabold text-white">₹{ride.fare}</span>
+                    <span className="text-2xl font-semibold text-[#f5f5f5]">₹{ride.fare}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 relative before:absolute before:left-[11px] before:top-6 before:bottom-6 before:w-0.5 before:bg-white/10 mb-6">
+                <div className="flex flex-col gap-4 relative before:absolute before:left-[11px] before:top-6 before:bottom-6 before:w-[1px] before:bg-[#2a2a2a] mb-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 z-10 ring-4 ring-[#121212]">
+                    <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 z-10 ring-4 ring-[#1a1a1a]">
                       <div className="w-2 h-2 rounded-full bg-blue-500" />
                     </div>
-                    <p className="text-gray-300 font-medium text-sm pt-0.5">{ride.pickup}</p>
+                    <p className="text-[#f5f5f5] font-medium text-sm pt-0.5">{ride.pickup}</p>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 z-10 ring-4 ring-[#121212]">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 z-10 ring-4 ring-[#1a1a1a]">
                       <MapPin size={12} className="text-emerald-500" />
                     </div>
-                    <p className="text-gray-300 font-medium text-sm pt-0.5">{ride.drop}</p>
+                    <p className="text-[#f5f5f5] font-medium text-sm pt-0.5">{ride.drop}</p>
                   </div>
                 </div>
 
                 {/* Only allow downloading invoice if it was completed AND paid */}
                 {ride.status === 'completed' && ride.paymentStatus === 'completed' && (
-                  <div className="pt-6 border-t border-white/5 flex justify-end">
+                  <div className="pt-6 border-t border-[#2a2a2a] flex justify-end">
                     <button
                       onClick={() => handleDownloadPDF(ride)}
                       disabled={isDownloading === ride._id}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all disabled:opacity-50"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-[#f5f5f5] rounded-lg font-medium transition-colors disabled:opacity-50"
                     >
                       {isDownloading === ride._id ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

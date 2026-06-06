@@ -112,25 +112,25 @@ export default function PartnerDashboard() {
   }
 
   return (
-    <div className="pt-24 pb-12 px-6 min-h-screen bg-[#0a0a0a]">
+    <div className="pt-24 pb-12 px-6 min-h-screen bg-[#0f0f0f]">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight">Partner Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-[#f5f5f5]">Partner Dashboard</h1>
           </div>
           {partnerStatus === 'approved' && (
             <div className="flex gap-3">
               <button 
                 onClick={() => router.push('/partner/dashboard/earnings')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                className="px-5 py-2.5 bg-blue-600 hover:opacity-90 text-white rounded-lg font-medium transition-opacity flex items-center gap-2"
               >
                 <DollarSign size={18} />
                 Earnings & Payouts
               </button>
               <button 
                 onClick={() => router.push('/rides')}
-                className="px-6 py-3 bg-[#121212] hover:bg-[#1a1a1a] text-white border border-white/10 rounded-xl font-bold transition-all flex items-center gap-2 hidden md:flex"
+                className="px-5 py-2.5 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#f5f5f5] border border-[#2a2a2a] rounded-lg font-medium transition-colors flex items-center gap-2 hidden md:flex"
               >
                 <FileText size={18} />
                 Ride History
@@ -144,19 +144,19 @@ export default function PartnerDashboard() {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-4"
+            className="mb-8 p-6 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl flex items-start gap-4"
           >
-            <div className="bg-red-500/20 p-2 rounded-xl shrink-0 mt-1">
+            <div className="bg-red-500/10 p-2 rounded-lg shrink-0 mt-1">
               <AlertCircle className="text-red-500" size={24} />
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-red-500 text-lg mb-1">Final Vehicle Verification Failed</h4>
-              <p className="text-sm text-red-400/80 mb-3 leading-relaxed">
+              <h4 className="font-semibold text-[#f5f5f5] text-lg mb-1">Final Vehicle Verification Failed</h4>
+              <p className="text-sm text-[#9ca3af] mb-4 leading-relaxed">
                 Your vehicle application was reviewed but could not be approved. Reason: <strong className="text-red-400">"{vehicleData.rejectionReason}"</strong>
               </p>
               <button 
                 onClick={() => router.push('/partner/onboarding/pricing')}
-                className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-red-600/20 flex items-center gap-2 w-fit"
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 w-fit"
               >
                 Fix Fare Pricing & Vehicle Photo
                 <ChevronRight size={16} />
@@ -170,14 +170,14 @@ export default function PartnerDashboard() {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex items-center gap-4"
+            className="mb-8 p-6 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl flex items-center gap-4"
           >
-            <div className="bg-yellow-500/20 p-2 rounded-xl">
+            <div className="bg-yellow-500/10 p-2 rounded-lg">
               <Clock className="text-yellow-500" size={24} />
             </div>
             <div>
-              <h4 className="font-bold text-yellow-500">Review in Progress</h4>
-              <p className="text-sm text-yellow-500/70">Our team is verifying your documents. This usually takes 24-48 hours.</p>
+              <h4 className="font-semibold text-[#f5f5f5]">Review in Progress</h4>
+              <p className="text-sm text-[#9ca3af]">Our team is verifying your documents. This usually takes 24-48 hours.</p>
             </div>
           </motion.div>
         )}
@@ -187,20 +187,20 @@ export default function PartnerDashboard() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 p-6 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl shadow-emerald-500/20"
+            className="mb-8 p-6 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
           >
             <div className="flex items-center gap-4">
-              <div className="bg-white/20 p-3 rounded-2xl shrink-0">
-                <Car className="text-white" size={28} />
+              <div className="bg-[#2a2a2a] p-3 rounded-lg shrink-0">
+                <Car className="text-[#f5f5f5]" size={28} />
               </div>
               <div>
-                <h4 className="font-extrabold text-white text-xl">Active Trip in Progress</h4>
-                <p className="text-emerald-100 mt-1 font-medium">You have an ongoing ride. Please complete it.</p>
+                <h4 className="font-semibold text-[#f5f5f5] text-xl">Active Trip in Progress</h4>
+                <p className="text-[#9ca3af] mt-1 text-sm">You have an ongoing ride. Please complete it.</p>
               </div>
             </div>
             <button 
               onClick={() => router.push(`/partner/dashboard/rides/${activeRide.id}`)}
-              className="px-6 py-3 bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 w-full md:w-auto justify-center"
+              className="px-5 py-2.5 bg-blue-600 hover:opacity-90 text-white rounded-lg font-medium transition-opacity flex items-center gap-2 w-full md:w-auto justify-center"
             >
               Resume Active Trip
               <ChevronRight size={18} />
@@ -227,47 +227,47 @@ export default function PartnerDashboard() {
                         toast.error("Waiting for admin action...")
                     }
                 }}
-                className={`relative p-6 rounded-3xl border transition-all cursor-pointer overflow-hidden group
-                  ${isCompleted ? 'bg-green-500/5 border-green-500/20' : 
-                    isInProgress ? 'bg-blue-600/5 border-blue-500/40 shadow-lg shadow-blue-600/5' : 
-                    'bg-white/[0.02] border-white/5 opacity-60'}`}
+                className={`relative p-6 rounded-xl border transition-all cursor-pointer overflow-hidden group
+                  ${isCompleted ? 'bg-[#1a1a1a] border-green-500/30' : 
+                    isInProgress ? 'bg-[#1a1a1a] border-blue-500/50' : 
+                    'bg-[#0f0f0f] border-[#2a2a2a] opacity-80'}`}
               >
                 {/* Background Decor */}
-                <div className={`absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity
-                  ${isCompleted ? 'text-green-500' : isInProgress ? 'text-blue-500' : 'text-white'}`}>
+                <div className={`absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity
+                  ${isCompleted ? 'text-green-500' : isInProgress ? 'text-blue-500' : 'text-[#9ca3af]'}`}>
                   <step.icon size={100} strokeWidth={1} />
                 </div>
 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
-                    <div className={`p-3 rounded-2xl ${
-                      isCompleted ? 'bg-green-500/20 text-green-500' : 
-                      isInProgress ? 'bg-blue-600 text-white' : 
-                      'bg-white/5 text-gray-500'
+                    <div className={`p-2 rounded-lg ${
+                      isCompleted ? 'bg-green-500/10 text-green-500' : 
+                      isInProgress ? 'bg-blue-500/10 text-blue-500' : 
+                      'bg-[#2a2a2a] text-[#9ca3af]'
                     }`}>
                       <step.icon size={22} />
                     </div>
                     {isCompleted ? (
                       <CheckCircle2 size={20} className="text-green-500" />
                     ) : isLocked ? (
-                      <Lock size={18} className="text-gray-600" />
+                      <Lock size={18} className="text-[#9ca3af]" />
                     ) : (
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-1 rounded-full">
+                      <div className="text-xs font-medium text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md">
                         Action
                       </div>
                     )}
                   </div>
 
-                  <h3 className={`font-bold mb-1 ${isLocked ? 'text-gray-500' : 'text-white'}`}>
+                  <h3 className={`font-semibold mb-1 ${isLocked ? 'text-[#9ca3af]' : 'text-[#f5f5f5]'}`}>
                     {step.id}. {step.title}
                   </h3>
-                  <p className={`text-xs leading-relaxed ${isLocked ? 'text-gray-600' : 'text-gray-400'}`}>
+                  <p className={`text-sm leading-relaxed ${isLocked ? 'text-[#9ca3af]' : 'text-[#9ca3af]'}`}>
                     {step.description}
                   </p>
                   
                   {!isLocked && (
-                    <div className="mt-4 flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter text-blue-400 group-hover:gap-2 transition-all">
-                      {isCompleted ? 'View Details' : 'Continue'} <ChevronRight size={12} />
+                    <div className="mt-4 flex items-center gap-1 text-xs font-medium text-blue-500 group-hover:text-blue-400 transition-colors">
+                      {isCompleted ? 'View Details' : 'Continue'} <ChevronRight size={14} />
                     </div>
                   )}
                 </div>

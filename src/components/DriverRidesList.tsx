@@ -122,20 +122,20 @@ export default function DriverRidesList() {
   return (
     <div className="mt-12 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Available Ride Requests</h2>
+        <h2 className="text-2xl font-semibold text-[#f5f5f5]">Available Ride Requests</h2>
         <button 
           onClick={() => fetchRides(true)}
           disabled={refreshing}
-          className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all disabled:opacity-50"
+          className="p-2 bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#2a2a2a] rounded-lg text-[#9ca3af] hover:text-[#f5f5f5] transition-colors disabled:opacity-50"
         >
           <RefreshCw size={20} className={refreshing ? "animate-spin text-blue-500" : ""} />
         </button>
       </div>
 
       {rides.length === 0 ? (
-        <div className="bg-[#121212] border border-white/5 p-8 rounded-2xl text-center">
-          <p className="text-gray-400">No available rides in your area right now.</p>
-          <p className="text-sm text-gray-500 mt-2">The list updates automatically every 15 seconds.</p>
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] p-8 rounded-xl text-center">
+          <p className="text-[#9ca3af] font-medium">No available rides in your area right now.</p>
+          <p className="text-sm text-[#9ca3af] mt-2">The list updates automatically every 15 seconds.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -146,41 +146,41 @@ export default function DriverRidesList() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-[#121212] border border-white/10 rounded-2xl p-5 hover:border-blue-500/30 transition-all shadow-lg"
+                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
               >
-                <div className="flex items-start justify-between mb-4 pb-4 border-b border-white/5">
+                <div className="flex items-start justify-between mb-4 pb-4 border-b border-[#2a2a2a]">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-blue-500/20">
+                    <span className="px-3 py-1 bg-blue-500/10 text-blue-500 text-xs font-medium capitalize rounded-lg border border-blue-500/20">
                       {ride.vehicleType}
                     </span>
-                    <span className="text-gray-500 text-xs">
+                    <span className="text-[#9ca3af] text-xs">
                       {new Date(ride.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <div className="text-right">
-                    <p className="text-emerald-400 font-bold">Est. Fare</p>
-                    <p className="text-xs text-gray-500">(Calculated post-ride)</p>
+                    <p className="text-emerald-500 font-medium">Est. Fare</p>
+                    <p className="text-xs text-[#9ca3af]">(Calculated post-ride)</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-start gap-3">
-                    <div className="mt-1 p-1.5 bg-blue-500/20 text-blue-500 rounded-lg shrink-0">
+                    <div className="mt-1 p-1.5 bg-[#0f0f0f] border border-[#2a2a2a] text-blue-500 rounded-lg shrink-0">
                       <MapPin size={16} />
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Pickup</p>
-                      <p className="text-sm text-gray-300 font-medium line-clamp-2">{ride.pickup}</p>
+                      <p className="text-xs text-[#9ca3af] font-medium">Pickup</p>
+                      <p className="text-sm text-[#f5f5f5] font-medium line-clamp-2 mt-0.5">{ride.pickup}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="mt-1 p-1.5 bg-red-500/20 text-red-500 rounded-lg shrink-0">
+                    <div className="mt-1 p-1.5 bg-[#0f0f0f] border border-[#2a2a2a] text-red-500 rounded-lg shrink-0">
                       <Navigation size={16} />
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Drop</p>
-                      <p className="text-sm text-gray-300 font-medium line-clamp-2">{ride.drop}</p>
+                      <p className="text-xs text-[#9ca3af] font-medium">Drop</p>
+                      <p className="text-sm text-[#f5f5f5] font-medium line-clamp-2 mt-0.5">{ride.drop}</p>
                     </div>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export default function DriverRidesList() {
                 <button
                   onClick={() => handleAcceptRide(ride._id)}
                   disabled={acceptingId === ride._id}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                  className="w-full py-2.5 bg-blue-600 hover:opacity-90 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-opacity disabled:opacity-50"
                 >
                   {acceptingId === ride._id ? (
                     <RefreshCw size={20} className="animate-spin" />

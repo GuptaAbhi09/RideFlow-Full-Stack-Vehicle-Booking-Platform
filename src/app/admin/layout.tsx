@@ -9,7 +9,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0a0a]">
+    <div className="flex flex-col min-h-screen bg-[#0f0f0f]">
       <AdminNavbar />
       <main className="flex-grow pt-[90px]">
         {children}
