@@ -70,10 +70,8 @@ export async function POST(req: Request) {
     existingVehicle.waitingCharge = Number(waitingCharge);
     existingVehicle.imageUrl = imageUrl;
     
-    // Reset status to pending to trigger a new admin review if it was rejected
-    if (existingVehicle.status === 'rejected') {
-      existingVehicle.status = 'pending';
-    }
+    // Set status to pending to trigger a new admin review
+    existingVehicle.status = 'pending';
     
     await existingVehicle.save();
 

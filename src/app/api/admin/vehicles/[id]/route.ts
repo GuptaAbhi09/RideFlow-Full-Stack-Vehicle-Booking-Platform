@@ -59,11 +59,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     
     await vehicle.save()
 
-    // If vehicle is approved, update user's step to 8 (Live)
+    // If vehicle is approved, update user's step to 8 (Live) and status to approved
     if (status === "approved") {
       await User.findByIdAndUpdate(
         vehicle.owner,
-        { partnerOnboardingStep: 8 },
+        { 
+          partnerOnboardingStep: 8,
+          partnerStatus: "approved" 
+        },
         { new: true }
       )
     }

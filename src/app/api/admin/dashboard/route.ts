@@ -33,7 +33,7 @@ export async function GET() {
     const pendingReviews = await User.find({ 
       role: "partner", 
       partnerStatus: "pending",
-      partnerOnboardingStep: { $gte: 3 } 
+      partnerOnboardingStep: 3
     }).select("name email partnerOnboardingStep createdAt").limit(10)
 
     // 3. Pending Video KYC (Partners in pending or in_progress kyc state)

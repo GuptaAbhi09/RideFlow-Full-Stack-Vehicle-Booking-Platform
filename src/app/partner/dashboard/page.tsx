@@ -100,14 +100,11 @@ export default function PartnerDashboard() {
     }
 
     if (stepId <= currentStep) {
-        // Special case for Review step (Step 4)
-        if (stepId === 4 && partnerStatus !== 'approved') return 'in-progress'
         return 'completed'
     }
     
     // Logic for unlocking next steps
     if (stepId === currentStep + 1) {
-        if (currentStep === 3 && partnerStatus !== 'approved' && stepId > 3) return 'locked'
         return 'in-progress'
     }
     
@@ -256,7 +253,7 @@ export default function PartnerDashboard() {
                       <Lock size={18} className="text-gray-600" />
                     ) : (
                       <div className="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-1 rounded-full">
-                        Next
+                        Action
                       </div>
                     )}
                   </div>
