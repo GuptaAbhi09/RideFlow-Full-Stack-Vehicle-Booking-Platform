@@ -41,6 +41,9 @@ export async function POST(req: Request) {
     // Generate a random 4-digit OTP (1000 - 9999)
     const startOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
+    // Generate a unique tracking token for live sharing
+    const trackingToken = crypto.randomUUID();
+
     // Create a new booking with initial state 'searching'
     const newBooking = await Booking.create({
       customerId: session.user.id, // Assuming session.user has id
@@ -56,6 +59,7 @@ export async function POST(req: Request) {
       distance,
       duration,
       startOtp,
+      trackingToken,
       status: "searching"
     });
 

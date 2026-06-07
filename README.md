@@ -17,11 +17,10 @@ RideFlow utilizes a modern, unified stack:
 
 ## ✨ Uniqueness & Innovations
 
-What makes RideFlow completely unique compared to standard ride-booking clones is its focus on **Trust & Safety** and **Marketplace Compliance**.
+What makes RideFlow completely unique compared to standard ride-booking clones is its focus on **Trust & Safety** and **Data Privacy**.
 
 * **Native Video KYC:** Standard apps rely on slow background checks with documents that are easily faked. RideFlow features a native 1-on-1 Real-Time Video KYC system. Before a driver goes live, an Admin initiates a WebRTC video call directly inside the app to verify their identity.
-* **In-App Real-Time Chat (Shared Room Pattern):** Engineered a hybrid messaging system combining Socket.io for low-latency delivery and MongoDB for persistent storage. Drivers and customers dynamically join an isolated Socket.io room specific to their active ride, ensuring absolute privacy and data encapsulation.
-* **Driver-Empowered Pricing Compliance:** Instead of a black-box algorithm dictating prices, the onboarding flow requires drivers to declare their Base Fares and Per-Km rates. Admins use this data to ensure market compliance before approving them, leaning closer to a decentralized marketplace model.
+* **Secure Live Location Sharing (Token-Based):** Instead of exposing vulnerable MongoDB ObjectIDs (`_id`) in public URLs, RideFlow dynamically generates cryptographically secure `trackingTokens`. This allows riders to safely share their live GPS route with family members via a public tracking link, completely preventing ID Enumeration attacks and protecting driver privacy post-ride.
 
 ## 🧠 Engineering Challenges Solved
 
@@ -38,8 +37,7 @@ This was tracked down to **Query Bleed** in the Admin queues and non-atomic data
 ## 🗺️ Future Roadmap
 
 * **Dynamic "Pick Up My Friends" Split-Fare:** A shared ride link that calculates a multi-stop route and dynamically splits the final Razorpay bill based on the distance each friend traveled.
-* **Share Live Tracking Link:** A secure, public-facing URL that riders can send to family members so they can watch the cab moving on a map in real-time.
-* **"No-Internet" Offline Safety Mode:** Utilizing Service Workers and `localStorage` to cache driver details and an emergency SOS dialer, ensuring riders are never trapped on a white screen if they lose cellular data.
+
 
 ## 🛠️ Getting Started
 
@@ -51,13 +49,6 @@ npm install
 Start the Next.js frontend:
 ```bash
 npm run dev
-```
-
-In a separate terminal, start the Socket.io server:
-```bash
-cd socketServer
-npm install
-node index.js
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

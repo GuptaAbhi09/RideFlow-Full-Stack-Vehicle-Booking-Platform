@@ -11,7 +11,8 @@ export const PUBLIC_ROUTES = [
     '/about',
     '/contact',
     '/api/auth', // NextAuth endpoints
-];
+    '/track',
+    '/api/track',];
 
 // Routes for authentication (login/signup)
 // Logged in users should be redirected away from these

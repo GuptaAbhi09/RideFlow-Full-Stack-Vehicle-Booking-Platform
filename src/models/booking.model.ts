@@ -28,6 +28,7 @@ export interface IBooking extends Document {
     text: string
     timestamp: Date
   }[]
+  trackingToken?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -108,7 +109,12 @@ const bookingSchema = new Schema<IBooking>({
     sender: { type: String, enum: ['customer', 'partner'], required: true },
     text: { type: String, required: true },
     timestamp: { type: Date, default: Date.now }
-  }]
+  }],
+  trackingToken: {
+    type: String,
+    unique: true,
+    sparse: true
+  }
 }, {
   timestamps: true
 })

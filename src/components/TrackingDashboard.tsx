@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { MapPin, Navigation, Car, Users, XCircle, CreditCard, CheckCircle, Star } from 'lucide-react'
+import { MapPin, Navigation, Car, Users, XCircle, CreditCard, CheckCircle, Star, Share2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { getSocket } from '@/lib/socket'
 import RideChat from './RideChat'
@@ -37,6 +37,7 @@ interface TrackingDashboardProps {
     dropLat?: number
     dropLng?: number
     startOtp?: string
+    trackingToken?: string
   }
 }
 
@@ -165,6 +166,29 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
       }
     }
   }, [session, booking.id, booking.status, currentStatus, router])
+
+  const handleShareTracking = async () => {
+    if (!booking.trackingToken) {
+      toast.error("Tracking link not available yet.");
+      return;
+    }
+    const url = `${window.location.origin}/track/${booking.trackingToken}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Track my RideFlow trip live!',
+          text: `I'm on a ride! Watch my live location here:`,
+          url: url,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success("Tracking link copied to clipboard!");
+    }
+  };
 
   const handleCancelRide = async () => {
     if (confirm("Are you sure you want to cancel this ride request?")) {
@@ -345,6 +369,17 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
             )}
           </div>
         </div>
+
+        {/* Share Live Tracking */}
+        {booking.trackingToken && (currentStatus === 'accepted' || currentStatus === 'arriving' || currentStatus === 'started') && (
+          <button 
+            onClick={handleShareTracking}
+            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#2a2a2a] text-[#f5f5f5] rounded-xl p-4 flex items-center justify-center gap-2 transition-colors font-medium shadow-sm"
+          >
+            <Share2 size={18} className="text-blue-500" />
+            Share Live Tracking Link
+          </button>
+        )}
 
         {/* Conditional Rendering based on Trip Completion / Rating */}
         {isRatingMode ? (
