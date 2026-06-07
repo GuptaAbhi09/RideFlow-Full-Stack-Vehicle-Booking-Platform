@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDb from '@/lib/db';
 import Booking from '@/models/booking.model';
 
-export async function GET(req: Request, { params }: { params: { token: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ token: string }> }) {
   try {
     const { token } = await params;
     await connectDb();
