@@ -13,7 +13,7 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
   ]
 
   return (
-    <section className="relative min-h-[90vh] py-24 w-full overflow-hidden flex items-center justify-center bg-[#0f0f0f] pt-32 pb-20">
+    <section className="relative min-h-[90vh] py-16 md:py-24 w-full overflow-hidden flex items-center justify-center bg-[#0f0f0f] pt-24 md:pt-32 pb-16 md:pb-20">
       <div 
         className="absolute inset-0 z-0 scale-110"
         style={{ 
@@ -43,7 +43,7 @@ const HeroSection = ({ onBookNow }: { onBookNow: () => void }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-semibold text-[#f5f5f5] leading-snug mb-6"
+          className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#f5f5f5] leading-snug mb-6"
         >
           Your Journey, Perfected.
         </motion.h1>

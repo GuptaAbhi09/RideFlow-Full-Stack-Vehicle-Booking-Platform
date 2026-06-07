@@ -122,7 +122,7 @@ export default function DriverRidesList() {
   return (
     <div className="mt-12 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-[#f5f5f5]">Available Ride Requests</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold text-[#f5f5f5]">Available Ride Requests</h2>
         <button 
           onClick={() => fetchRides(true)}
           disabled={refreshing}
@@ -146,7 +146,7 @@ export default function DriverRidesList() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 hover:border-[#3a3a3a] transition-colors"
+                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 sm:p-5 hover:border-[#3a3a3a] transition-colors"
               >
                 <div className="flex items-start justify-between mb-4 pb-4 border-b border-[#2a2a2a]">
                   <div className="flex items-center gap-2">

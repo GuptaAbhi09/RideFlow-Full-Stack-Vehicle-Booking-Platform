@@ -207,7 +207,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
           <X size={20} />
         </button>
 
-        <div className="p-8">
+        <div className="p-5 md:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
           <AnimatePresence mode="wait">
             {step === 'login' && (
               <motion.form
@@ -219,7 +219,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                 className="space-y-6"
               >
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">Welcome Back</h2>
                   <p className="mt-2 text-gray-400">Login to your RideFlow account</p>
                 </div>
 
@@ -310,7 +310,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                 className="space-y-6"
               >
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-white">Create Account</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">Create Account</h2>
                   <p className="mt-2 text-gray-400">Join the future of mobility</p>
                 </div>
 
@@ -405,7 +405,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                 className="space-y-6"
               >
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-white">Verify Email</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">Verify Email</h2>
                   <p className="mt-2 text-gray-400">We've sent a code to {formData.email}</p>
                 </div>
 
@@ -425,7 +425,7 @@ const AuthModal = ({ open, onClose }: PropsType) => {
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(i, e)}
-                      className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 text-center text-2xl font-bold text-white focus:border-blue-500 focus:outline-none transition-all"
+                      className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-white/5 border border-white/10 text-center text-xl sm:text-2xl font-bold text-white focus:border-blue-500 focus:outline-none transition-all"
                     />
                   ))}
                 </div>

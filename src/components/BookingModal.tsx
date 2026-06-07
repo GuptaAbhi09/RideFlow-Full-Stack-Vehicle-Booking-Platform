@@ -366,7 +366,7 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-[#1a1a1a] border border-[#2a2a2a] w-full max-w-md rounded-xl p-6 relative pointer-events-auto"
+              className="bg-[#1a1a1a] border border-[#2a2a2a] w-full max-w-md rounded-xl p-4 sm:p-6 relative pointer-events-auto max-h-[90vh] overflow-y-auto custom-scrollbar"
             >
               <button 
                 onClick={onClose}
@@ -376,8 +376,8 @@ const BookingModal = ({ open, onClose, onRequireLogin }: BookingModalProps) => {
               </button>
 
               <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-[#f5f5f5] mb-2">Book Your Ride</h2>
-                <p className="text-[#9ca3af] text-sm">Enter your details below and we'll get you moving instantly.</p>
+                <h2 className="text-xl sm:text-2xl font-semibold text-[#f5f5f5] mb-2">Book Your Ride</h2>
+                <p className="text-[#9ca3af] text-xs sm:text-sm">Enter your details below and we'll get you moving instantly.</p>
               </div>
 
               <form onSubmit={!estimateData ? handleGetEstimate : (e) => { e.preventDefault(); handleConfirmBooking(); }} className="space-y-5">

@@ -74,7 +74,7 @@ export default function PublicTrackingPage() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] flex flex-col md:flex-row">
-      <div className="w-full md:w-1/2 lg:w-[65%] h-[50vh] md:h-screen relative z-0 border-b md:border-b-0 md:border-r border-[#2a2a2a] flex items-center justify-center">
+      <div className="w-full md:w-1/2 lg:w-[65%] h-[40vh] md:h-screen relative z-0 border-b md:border-b-0 md:border-r border-[#2a2a2a] flex items-center justify-center">
         {(rideData.status === 'completed' || rideData.status === 'cancelled') ? (
           <div className="text-center p-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl max-w-sm">
             <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${rideData.status === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
@@ -96,8 +96,8 @@ export default function PublicTrackingPage() {
         )}
       </div>
       
-      <div className="w-full md:w-1/2 lg:w-[35%] p-6 bg-[#0f0f0f] flex flex-col gap-6 overflow-y-auto">
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6">
+      <div className="w-full md:w-1/2 lg:w-[35%] p-4 md:p-6 bg-[#0f0f0f] flex flex-col gap-6 overflow-y-auto">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 sm:p-6">
           <h1 className="text-xl font-semibold text-[#f5f5f5] mb-4">Live Ride Tracking</h1>
           
           <div className="flex items-center justify-between mb-6">

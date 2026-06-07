@@ -199,7 +199,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
     <div className="h-screen bg-[#0f0f0f] pt-[72px] flex flex-col md:flex-row overflow-hidden">
       
       {/* Left Panel: Map */}
-      <div className="w-full md:w-1/2 lg:w-[60%] relative h-[50vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
+      <div className="w-full md:w-1/2 lg:w-[60%] relative h-[40vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
         <MapTracking 
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
@@ -214,10 +214,10 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
       </div>
 
       {/* Right Panel: Trip Details & Controls */}
-      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
+      <div className="w-full md:flex-1 p-4 md:p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
         
         {/* Header */}
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 flex items-center justify-between gap-4">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 sm:p-6 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold text-[#f5f5f5] mb-1">Active Trip</h1>
             <p className="text-[#9ca3af] text-xs">
@@ -248,7 +248,7 @@ export default function DriverActiveTrip({ booking }: DriverActiveTripProps) {
         </div>
 
         {/* Details */}
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 space-y-4 flex-1">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 sm:p-6 space-y-4 flex-1">
           <h2 className="text-sm font-medium text-[#f5f5f5]">Navigation Details</h2>
           
           <div className="flex flex-col gap-4 relative">

@@ -328,7 +328,7 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
     <div className="h-screen bg-[#0f0f0f] pt-[72px] flex flex-col md:flex-row overflow-hidden">
       
       {/* Left Panel: Map */}
-      <div className="w-full md:w-1/2 lg:w-[55%] relative h-[50vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
+      <div className="w-full md:w-1/2 lg:w-[55%] relative h-[40vh] md:h-full z-0 bg-[#0f0f0f] border-r border-[#2a2a2a]">
         <MapTracking 
           pickupAddress={booking.pickup} 
           dropAddress={booking.drop} 
@@ -343,10 +343,10 @@ const TrackingDashboard = ({ booking }: TrackingDashboardProps) => {
       </div>
 
       {/* Right Panel: Details & Status */}
-      <div className="w-full md:flex-1 p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
+      <div className="w-full md:flex-1 p-4 md:p-6 overflow-y-auto bg-[#0f0f0f] flex flex-col gap-6 relative z-10 custom-scrollbar">
         
         {/* Header */}
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-6 flex items-center justify-between gap-4">
+        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 sm:p-6 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold text-[#f5f5f5] mb-1">Ride Status</h1>
             <p className="text-[#9ca3af] text-xs">
